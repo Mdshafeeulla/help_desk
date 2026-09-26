@@ -18,31 +18,27 @@ class Config:
     chunk_overlap: int = 50             # words overlap between chunks
 
     # ── Retrieval ────────────────────────────────────────────────────
-    top_k: int = 6
+    top_k: int = 4                       # 4 chunks is optimal for speed & context accuracy
     semantic_weight: float = 0.65       # 0.65 ANN + 0.35 BM25
 
     # ── LLM ──────────────────────────────────────────────────────────
     ollama_model: str = "phi4-mini"
 
     # ── Departments ───────────────────────────────────────────────────
-    # Edit this list to match your company's departments
+    default_department: str = "it"
+    department_display_name: str = "IT Support"
     departments: list = field(default_factory=lambda: [
-        "hr",
-        "finance",
         "it",
-        "sales",
-        "marketing",
-        "operations",
-        "legal",
-        "management",
     ])
 
     # ── Available LLMs (must be pulled via `ollama pull`) ────────────
     available_models: list = field(default_factory=lambda: [
         "phi4-mini",
+        "llama3.2:1b",
+        "qwen2.5:1.5b",
+        "gemma2:2b",
         "mistral",
         "qwen2.5:7b-instruct-q4_K_M",
-        "gemma3:4b",
     ])
 
 

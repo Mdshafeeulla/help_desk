@@ -1,10 +1,13 @@
 # pages/2_Chat.py — Employee Q&A Interface
+import threading
+import time
 import streamlit as st
-from core.pipeline import query_department
+from core.pipeline import query_department, is_greeting
 from core.store import store
 from core.config import cfg
+from core.llm import prewarm_model
 
-st.set_page_config(page_title="Chat", page_icon="💬", layout="wide")
+st.set_page_config(page_title="MSU Corp Support", page_icon="🛡️", layout="wide")
 
 # ── Styles ────────────────────────────────────────────────────────────
 st.markdown("""
@@ -27,17 +30,12 @@ st.markdown("""
 
 # ── Sidebar: Department & Settings ────────────────────────────────────
 with st.sidebar:
-    st.title("🏢 Access Control")
+    st.title("🛡️ MSU Corp Support")
 
-    department = st.selectbox(
-        "Your Department",
-        cfg.departments,
-        format_func=lambda x: x.upper(),
-        help="You can ONLY access documents from this department.",
-    )
+    department = "it"
 
     st.markdown(
-        f'<div class="dept-badge">🔒 {department.upper()} ACCESS</div>',
+        '<div class="dept-badge">🔒 MSU CORP SUPPORT</div>',
         unsafe_allow_html=True,
     )
 
@@ -47,28 +45,33 @@ with st.sidebar:
     model = st.selectbox("LLM Model", cfg.available_models)
     top_k = st.slider("Chunks to retrieve", min_value=3, max_value=15, value=cfg.top_k)
 
+    # Pre-warm model in background thread when selected
+    if "active_model" not in st.session_state or st.session_state.active_model != model:
+        st.session_state.active_model = model
+        threading.Thread(target=prewarm_model, args=(model,), daemon=True).start()
+
     st.divider()
 
-    # Show indexed sources for this department
+    # Show indexed support documents
     sources = store.list_sources(department)
     if sources:
-        st.subheader(f"📄 {department.upper()} Documents")
+        st.subheader("📄 Support Knowledge Base")
         for s in sources:
             st.caption(f"• {s}")
     else:
         st.warning(
-            f"⚠️ No documents indexed for **{department.upper()}**.\n\n"
-            f"Ask an Admin to upload documents first."
+            "⚠️ No support documents indexed yet.\n\n"
+            "Ask an Admin to upload FAQs, manuals, and guides first."
         )
 
     st.divider()
     st.caption(f"Model: `{model}`")
-    st.caption(f"Embedder: `{cfg.embed_model}`")
-    st.caption(f"DB: LanceDB (persistent)")
+    st.caption("Powered by MSU Corp Knowledge Base")
+    st.caption("Available 24/7 · No ticket needed")
 
 # ── Main Chat Area ────────────────────────────────────────────────────
-st.title("💬 Knowledge Assistant")
-st.caption(f"Querying **{department.upper()}** department documents · Answers are grounded in your indexed knowledge base")
+st.title("🛡️ MSU Corp Support Assistant")
+st.caption("AI-powered L1 customer support · Describe your issue and get instant help from our knowledge base")
 
 # ── Session state for chat history ────────────────────────────────────
 if "messages" not in st.session_state:
@@ -86,11 +89,11 @@ if st.session_state.active_dept != department:
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
-        if "metadata" in msg:
+        if "metadata" in msg and msg["metadata"]:
             st.caption(msg["metadata"])
 
 # ── Chat Input ────────────────────────────────────────────────────────
-if prompt := st.chat_input(f"Ask about {department.upper()} documents..."):
+if prompt := st.chat_input("Ask an IT support question..."):
     # Show user message
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
@@ -98,36 +101,78 @@ if prompt := st.chat_input(f"Ask about {department.upper()} documents..."):
 
     # Generate response
     with st.chat_message("assistant"):
-        if store.is_empty(department):
+        # If it's not a greeting and no docs indexed, show warning
+        from core.instant_responses import get_instant_response as _check_instant
+        is_instant_query = _check_instant(prompt) is not None
+
+        if not is_instant_query and not is_greeting(prompt) and store.is_empty(department):
             answer = (
-                f"⚠️ There are no documents indexed for the **{department.upper()}** department yet. "
-                f"Please ask an Admin to upload documents first."
+                "⚠️ There are no documents indexed for **IT Support** yet. "
+                "Please ask an Admin to upload documents first."
             )
             st.warning(answer)
             metadata_str = ""
         else:
-            with st.spinner("🔍 Searching documents & generating answer..."):
-                try:
+            try:
+                t0 = time.perf_counter()
+
+                # ── Instant cache queries get no spinner (already sub-ms) ──
+                if is_instant_query:
                     result = query_department(
                         question=prompt,
                         department=department,
                         model=model,
                         top_k=top_k,
+                        stream=False,
                     )
+                else:
+                    spinner_msg = "💬 Thinking..." if is_greeting(prompt) else "🔍 Searching IT knowledge base..."
+                    with st.spinner(spinner_msg):
+                        result = query_department(
+                            question=prompt,
+                            department=department,
+                            model=model,
+                            top_k=top_k,
+                            stream=True,
+                        )
 
+                total_latency_ms = int((time.perf_counter() - t0) * 1000)
+
+                # ── Render answer ──────────────────────────────────────────
+                if result.get("is_instant"):
+                    # Instant answer — display directly, no streaming
                     answer = result["answer"]
                     st.markdown(answer)
+                else:
+                    # Streamed answer from LLM
+                    if result.get("stream") is not None:
+                        answer = st.write_stream(result["stream"])
+                    else:
+                        answer = result.get("answer", "")
+                        st.markdown(answer)
 
-                    # Metadata bar
-                    metadata_str = (
-                        f"⏱ {result['latency_ms']}ms · "
-                        f"🔒 {department.upper()} · "
-                        f"🤖 {result['model']} · "
-                        f"📄 {len(result['chunks'])} chunks"
-                    )
-                    st.caption(metadata_str)
+                # ── Metadata bar ───────────────────────────────────────────
+                chunks_count = len(result.get("chunks", []))
+                if result.get("is_instant"):
+                    chunks_label = "⚡ Instant"
+                    model_label = "cache"
+                elif chunks_count > 0:
+                    chunks_label = f"📄 {chunks_count} chunks"
+                    model_label = result["model"]
+                else:
+                    chunks_label = "💬 Conversational"
+                    model_label = result["model"]
 
-                    # Expandable source chunks
+                metadata_str = (
+                    f"⏱ {total_latency_ms}ms · "
+                    f"🔒 IT SUPPORT · "
+                    f"🤖 {model_label} · "
+                    f"{chunks_label}"
+                )
+                st.caption(metadata_str)
+
+                # ── Source chunks (only for RAG answers) ──────────────────
+                if result.get("chunks"):
                     with st.expander("🔍 View Source Chunks"):
                         for i, chunk in enumerate(result["chunks"], 1):
                             st.markdown(
@@ -140,17 +185,18 @@ if prompt := st.chat_input(f"Ask about {department.upper()} documents..."):
                             if i < len(result["chunks"]):
                                 st.divider()
 
-                except ValueError as e:
-                    answer = f"⚠️ {str(e)}"
-                    st.warning(answer)
-                    metadata_str = ""
-                except RuntimeError as e:
-                    answer = f"❌ {str(e)}"
-                    st.error(answer)
-                    metadata_str = ""
+            except ValueError as e:
+                answer = f"⚠️ {str(e)}"
+                st.warning(answer)
+                metadata_str = ""
+            except RuntimeError as e:
+                answer = f"❌ {str(e)}"
+                st.error(answer)
+                metadata_str = ""
 
         st.session_state.messages.append({
             "role": "assistant",
             "content": answer,
             "metadata": metadata_str if metadata_str else None,
         })
+

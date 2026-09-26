@@ -2,8 +2,8 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Enterprise RAG",
-    page_icon="🏢",
+    page_title="MSU Corp Support",
+    page_icon="🛡️",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
@@ -92,10 +92,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Hero ──────────────────────────────────────────────────────────────
-st.markdown('<div class="hero-title">🏢 Enterprise Knowledge Assistant</div>', unsafe_allow_html=True)
+st.markdown('<div class="hero-title">🛡️ MSU Corp Support Assistant</div>', unsafe_allow_html=True)
 st.markdown(
     '<div class="hero-subtitle">'
-    'AI-powered document Q&A with department-level data isolation'
+    'AI-powered 24/7 Customer Support — Resolve platform issues instantly without waiting for an agent'
     '</div>',
     unsafe_allow_html=True,
 )
@@ -107,14 +107,13 @@ with col1:
     st.markdown("""
     <div class="card">
         <div class="card-icon">💬</div>
-        <div class="card-title">Employee Chat</div>
+        <div class="card-title">Customer Support Chat</div>
         <div class="card-desc">
-            Ask questions about your department's documents.
-            Answers are grounded in your indexed knowledge base.
+            Facing a platform issue? Chat with our AI support agent to get instant answers and step-by-step resolutions — no wait times.
         </div>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Open Chat →", use_container_width=True, type="primary", key="btn_chat"):
+    if st.button("Start Support Chat →", use_container_width=True, type="primary", key="btn_chat"):
         st.switch_page("pages/2_Chat.py")
 
 with col2:
@@ -123,43 +122,42 @@ with col2:
         <div class="card-icon">🔑</div>
         <div class="card-title">Admin Panel</div>
         <div class="card-desc">
-            Upload documents, manage departments, and monitor
-            the knowledge base.
+            Upload support manuals, FAQs, troubleshooting guides, and manage the MSU Corp knowledge base.
         </div>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Open Admin →", use_container_width=True, key="btn_admin"):
+    if st.button("Open Admin Panel →", use_container_width=True, key="btn_admin"):
         st.switch_page("pages/1_Admin_Panel.py")
 
 # ── Features ──────────────────────────────────────────────────────────
 st.markdown("""
 <div class="feature-grid">
     <div class="feature-item">
-        <div class="feature-icon">🔒</div>
-        <div class="feature-text">ABAC Data Isolation</div>
+        <div class="feature-icon">⚡</div>
+        <div class="feature-text">Instant Responses</div>
     </div>
     <div class="feature-item">
-        <div class="feature-icon">⚡</div>
-        <div class="feature-text">Sub-2s Latency</div>
+        <div class="feature-icon">🔒</div>
+        <div class="feature-text">Private & Secure</div>
     </div>
     <div class="feature-item">
         <div class="feature-icon">🧠</div>
-        <div class="feature-text">Hybrid ANN + BM25</div>
-    </div>
-    <div class="feature-item">
-        <div class="feature-icon">💾</div>
-        <div class="feature-text">Persistent LanceDB</div>
-    </div>
-    <div class="feature-item">
-        <div class="feature-icon">🖥️</div>
-        <div class="feature-text">100% Local / Private</div>
+        <div class="feature-text">Knowledge-Grounded AI</div>
     </div>
     <div class="feature-item">
         <div class="feature-icon">📄</div>
-        <div class="feature-text">PDF + Text Upload</div>
+        <div class="feature-text">Document-Based Answers</div>
+    </div>
+    <div class="feature-item">
+        <div class="feature-icon">🕐</div>
+        <div class="feature-text">24/7 Availability</div>
+    </div>
+    <div class="feature-item">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-text">L1 Support Automation</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 st.divider()
-st.caption("Enterprise RAG · Local-first · Zero cloud dependency · Powered by Ollama + LanceDB")
+st.caption("MSU Corp Support Assistant · AI-powered L1 Customer Support · Powered by RAG + Local LLM")

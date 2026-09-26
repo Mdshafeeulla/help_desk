@@ -7,7 +7,7 @@ from utils.pdf_parser import extract_pdf_text
 from utils.image_parser import extract_image_text
 import json
 
-st.set_page_config(page_title="Admin Panel", page_icon="🔑", layout="wide")
+st.set_page_config(page_title="MSU Corp Admin", page_icon="🔑", layout="wide")
 
 # ── Header ────────────────────────────────────────────────────────────
 st.markdown("""
@@ -17,8 +17,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🔑 Admin Panel")
-st.caption("Upload documents to departments · Manage the knowledge base")
+st.title("🔑 MSU Corp Support Admin")
+st.caption("Upload support documents · Manage the MSU Corp knowledge base")
 
 # ── Tabs ──────────────────────────────────────────────────────────────
 tab_upload, tab_manage, tab_stats = st.tabs([
@@ -29,27 +29,18 @@ tab_upload, tab_manage, tab_stats = st.tabs([
 
 # ━━ Tab 1: Upload ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 with tab_upload:
-    st.subheader("Upload Documents to a Department")
+    st.subheader("Upload Documents to IT Support")
+    st.info("📂 All documents will be indexed into the **IT Support** knowledge base.")
 
-    col_dept, col_files = st.columns([1, 2])
-
-    with col_dept:
-        department = st.selectbox(
-            "Target Department",
-            [d.upper() for d in cfg.departments],
-            help="Documents will be tagged with this department for ABAC isolation.",
-        )
-
-    with col_files:
-        files = st.file_uploader(
-            "Upload PDF, TXT, or Image files (PNG, JPG, JPEG, WEBP, BMP)",
-            type=["pdf", "txt", "png", "jpg", "jpeg", "webp", "bmp"],
-            accept_multiple_files=True,
-            help="You can upload multiple files at once. Images will be processed with GPU OCR.",
-        )
+    files = st.file_uploader(
+        "Upload PDF, TXT, or Image files (PNG, JPG, JPEG, WEBP, BMP)",
+        type=["pdf", "txt", "png", "jpg", "jpeg", "webp", "bmp"],
+        accept_multiple_files=True,
+        help="You can upload multiple files at once. Images will be processed with GPU OCR.",
+    )
 
     if st.button("📥 Index Documents", type="primary", disabled=not files, use_container_width=True):
-        dept_lower = department.lower()
+        dept_lower = "it"
         progress_bar = st.progress(0)
         status = st.empty()
 
@@ -77,7 +68,7 @@ with tab_upload:
 
             # Index
             n = index_documents(text, department=dept_lower, source=f.name)
-            st.success(f"✅ **{f.name}** → {n} chunks indexed under **{department}**")
+            st.success(f"✅ **{f.name}** → {n} chunks indexed under **IT SUPPORT**")
 
             progress_bar.progress((i + 1) / len(files))
 
@@ -87,12 +78,12 @@ with tab_upload:
 
     st.divider()
     st.subheader("Direct JSON Ingestion")
-    st.caption("Paste JSON containing `department`, `title` (optional), and `content` fields to auto-route to departments.")
+    st.caption("Paste JSON containing `title` (optional) and `content` fields to auto-index into IT Support.")
     
     json_input = st.text_area(
         "Paste JSON here", 
         height=250, 
-        placeholder='[\n  {\n    "id": "management_001",\n    "department": "MANAGEMENT",\n    "title": "Strategic Goals 2025",\n    "content": "The company\'s strategic priorities..."\n  }\n]'
+        placeholder='[\n  {\n    "id": "it_guide_001",\n    "title": "VPN Troubleshooting Guide",\n    "content": "To connect to corporate VPN..."\n  }\n]'
     )
     
     if st.button("📥 Index JSON", type="primary", disabled=not json_input.strip(), use_container_width=True):
@@ -109,21 +100,18 @@ with tab_upload:
                 success_count = 0
                 
                 for i, item in enumerate(data):
-                    dept = str(item.get("department", "")).lower().strip()
+                    dept = str(item.get("department", "it")).lower().strip() or "it"
                     title = str(item.get("title", item.get("id", f"json_doc_{i}")))
                     content = str(item.get("content", ""))
                     
                     status.info(f"Processing {title}...")
                     
-                    if not dept:
-                        st.warning(f"⚠️ **{title}** — missing 'department', skipping.")
-                        continue
                     if not content.strip():
                         st.warning(f"⚠️ **{title}** — missing 'content', skipping.")
                         continue
                         
                     n = index_documents(content, department=dept, source=title)
-                    st.success(f"✅ **{title}** → {n} chunks indexed under **{dept.upper()}**")
+                    st.success(f"✅ **{title}** → {n} chunks indexed under **IT SUPPORT**")
                     success_count += 1
                     
                     progress_bar.progress((i + 1) / len(data))

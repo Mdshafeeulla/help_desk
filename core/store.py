@@ -114,9 +114,11 @@ class VectorStore:
         dept = department.lower()
         try:
             tbl = self._get_table()
-            df = tbl.to_pandas()
-            dept_df = df[df["department"] == dept]
-            return sorted(dept_df["source"].unique().tolist())
+            # Select only 'source' column to prevent loading heavy vector arrays into pandas memory
+            df = tbl.search().where(f"department = '{dept}'").select(["source"]).to_pandas()
+            if df.empty:
+                return []
+            return sorted(df["source"].unique().tolist())
         except Exception:
             return []
 
@@ -124,8 +126,10 @@ class VectorStore:
         """Return chunk counts per department (for admin dashboard)."""
         try:
             tbl = self._get_table()
-            df = tbl.to_pandas()
-            return df.groupby("department").size().to_dict()
+            df = tbl.search().select(["department"]).to_pandas()
+            if df.empty:
+                return {}
+            return df["department"].value_counts().to_dict()
         except Exception:
             return {}
 
