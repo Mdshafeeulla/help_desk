@@ -1,0 +1,26 @@
+# Enterprise RAG — Dependencies
+# Install PyTorch with CUDA FIRST (see README), then: pip install -r requirements.txt
+
+# LLM
+ollama>=0.4.0
+
+# Embeddings (sentence-transformers + torch already installed)
+sentence-transformers>=3.0.0
+einops>=0.8.0
+
+# Vector DB
+lancedb>=0.6.0
+pyarrow>=15.0.0
+
+# BM25 re-ranking
+rank_bm25>=0.2.2
+
+# PDF parsing
+PyMuPDF>=1.24.0
+
+# UI
+streamlit>=1.35.0
+pandas>=2.2.0
+
+# Core
+numpy>=1.26.0
