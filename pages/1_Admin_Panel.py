@@ -5,6 +5,7 @@ from core.store import store
 from core.config import cfg
 from utils.pdf_parser import extract_pdf_text
 from utils.image_parser import extract_image_text
+from utils.word_parser import extract_word_text
 import json
 
 st.set_page_config(page_title="MSU Corp Admin", page_icon="🔑", layout="wide")
@@ -33,8 +34,8 @@ with tab_upload:
     st.info("📂 All documents will be indexed into the **IT Support** knowledge base.")
 
     files = st.file_uploader(
-        "Upload PDF, TXT, or Image files (PNG, JPG, JPEG, WEBP, BMP)",
-        type=["pdf", "txt", "png", "jpg", "jpeg", "webp", "bmp"],
+        "Upload PDF, Word, TXT, or Image files (DOC, DOCX, PNG, JPG, JPEG, WEBP, BMP)",
+        type=["pdf", "doc", "docx", "txt", "png", "jpg", "jpeg", "webp", "bmp"],
         accept_multiple_files=True,
         help="You can upload multiple files at once. Images will be processed with GPU OCR.",
     )
@@ -52,6 +53,8 @@ with tab_upload:
             file_bytes = f.read()
             if fname.endswith(".pdf"):
                 text = extract_pdf_text(file_bytes)
+            elif any(fname.endswith(ext) for ext in [".doc", ".docx"]):
+                text = extract_word_text(file_bytes, filename=f.name)
             elif any(fname.endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".bmp"]):
                 text = extract_image_text(file_bytes)
             else:

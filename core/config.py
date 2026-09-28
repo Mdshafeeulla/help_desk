@@ -22,7 +22,7 @@ class Config:
     semantic_weight: float = 0.65       # 0.65 ANN + 0.35 BM25
 
     # ── LLM ──────────────────────────────────────────────────────────
-    ollama_model: str = "phi4-mini"
+    ollama_model: str = "llama3.2:1b"
 
     # ── Departments ───────────────────────────────────────────────────
     default_department: str = "it"
@@ -33,12 +33,8 @@ class Config:
 
     # ── Available LLMs (must be pulled via `ollama pull`) ────────────
     available_models: list = field(default_factory=lambda: [
-        "phi4-mini",
-        "llama3.2:1b",
-        "qwen2.5:1.5b",
-        "gemma2:2b",
         "mistral",
-        "qwen2.5:7b-instruct-q4_K_M",
+        "llama3.2:1b",
     ])
 
 
