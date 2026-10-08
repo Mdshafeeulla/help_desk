@@ -10,6 +10,7 @@ __pycache__/
 # LanceDB persistent data
 data/
 *.lance
+enterprise-rag-linux-amd64.tar
 
 # Test images
 IT_Policy_Infographic.png

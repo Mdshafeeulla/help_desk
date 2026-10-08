@@ -1,5 +1,5 @@
 # Enterprise RAG — Dependencies
-# Install PyTorch with CUDA FIRST (see README), then: pip install -r requirements.txt
+# Docker installs CPU PyTorch by default; install a matching CUDA build first for GPU use.
 
 # LLM
 ollama>=0.4.0
@@ -7,6 +7,7 @@ ollama>=0.4.0
 # Embeddings (sentence-transformers + torch already installed)
 sentence-transformers>=3.0.0
 einops>=0.8.0
+easyocr>=1.7.2
 
 # Vector DB
 lancedb>=0.6.0

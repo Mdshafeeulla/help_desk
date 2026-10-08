@@ -1,4 +1,5 @@
 # core/config.py
+import os
 from dataclasses import dataclass, field
 
 
@@ -10,7 +11,7 @@ class Config:
 
     # ── Embedder ─────────────────────────────────────────────────────
     embed_model: str = "nomic-ai/nomic-embed-text-v1.5"
-    embed_device: str = "cuda"          # change to "cpu" if no GPU
+    embed_device: str = os.getenv("EMBED_DEVICE", "auto")
     embed_dimensions: int = 256         # MRL: 256 of 768 dims
 
     # ── Chunking ─────────────────────────────────────────────────────
@@ -23,6 +24,7 @@ class Config:
 
     # ── LLM ──────────────────────────────────────────────────────────
     ollama_model: str = "llama3.2:1b"
+    ollama_num_ctx: int = 1024          # Lower context window uses less RAM/VRAM
 
     # ── Departments ───────────────────────────────────────────────────
     default_department: str = "it"

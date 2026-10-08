@@ -124,6 +124,7 @@ if prompt := st.chat_input("Ask an IT support question..."):
                         model=model,
                         top_k=top_k,
                         stream=False,
+                        history=st.session_state.messages[:-1],
                     )
                 else:
                     spinner_msg = "💬 Thinking..." if is_greeting(prompt) else "🔍 Searching IT knowledge base..."
@@ -134,6 +135,7 @@ if prompt := st.chat_input("Ask an IT support question..."):
                             model=model,
                             top_k=top_k,
                             stream=True,
+                            history=st.session_state.messages[:-1],
                         )
 
                 total_latency_ms = int((time.perf_counter() - t0) * 1000)

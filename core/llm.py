@@ -1,10 +1,18 @@
 # core/llm.py
+import os
 import ollama
 from core.config import cfg
 from utils.logger import log
 
+_client = ollama.Client(host=os.getenv("OLLAMA_HOST", "http://localhost:11434"))
 
-def ask_llm(prompt: str, model: str = None, stream: bool = False):
+
+def ask_llm(
+    prompt: str,
+    model: str = None,
+    stream: bool = False,
+    history: list[dict] = None,
+):
     """
     Send a prompt to an Ollama model.
 
@@ -17,18 +25,23 @@ def ask_llm(prompt: str, model: str = None, stream: bool = False):
         str (if stream=False) or generator (if stream=True)
     """
     model = model or cfg.ollama_model
-    messages = [{"role": "user", "content": prompt}]
+    messages = [
+        {"role": message["role"], "content": message["content"]}
+        for message in (history or [])[-2:]
+        if message.get("role") in {"user", "assistant"}
+        and isinstance(message.get("content"), str)
+    ]
+    messages.append({"role": "user", "content": prompt})
     
-    # Speed Optimizations:
-    # 1. num_ctx=2048 reduces prompt processing (eval) overhead significantly.
-    # 2. keep_alive="24h" prevents Ollama from unloading the model from RAM/VRAM after idle time.
+    # A smaller context window lowers Ollama's memory use; increase it if prompts
+    # are too long. keep_alive avoids reloading the model between requests.
     options = {
-        "num_ctx": 2048,
+        "num_ctx": cfg.ollama_num_ctx,
     }
 
     try:
         if stream:
-            response = ollama.chat(
+            response = _client.chat(
                 model=model,
                 messages=messages,
                 stream=True,
@@ -38,7 +51,7 @@ def ask_llm(prompt: str, model: str = None, stream: bool = False):
             for chunk in response:
                 yield chunk["message"]["content"]
         else:
-            response = ollama.chat(
+            response = _client.chat(
                 model=model,
                 messages=messages,
                 options=options,
@@ -61,10 +74,10 @@ def prewarm_model(model: str = None):
     model = model or cfg.ollama_model
     try:
         log.info(f"[LLM] Pre-warming model '{model}' in VRAM/RAM...")
-        ollama.chat(
+        _client.chat(
             model=model,
             messages=[{"role": "user", "content": "hi"}],
-            options={"num_ctx": 256},
+            options={"num_ctx": cfg.ollama_num_ctx},
             keep_alive="24h",
         )
         log.info(f"[LLM] Model '{model}' pre-warmed ✓")

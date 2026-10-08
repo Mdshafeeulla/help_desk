@@ -54,12 +54,34 @@ def is_greeting(text: str) -> bool:
     return False
 
 
+def is_followup_edit_request(question: str, history: list[dict] = None) -> bool:
+    """Identify requests to transform content from the previous exchange."""
+    if not history:
+        return False
+
+    text = " ".join(question.lower().split())
+    edit_actions = (
+        "rephrase", "rewrite", "shorten", "summarize", "expand", "translate",
+        "make it", "turn it", "draft an email", "write an email", "compose an email",
+        "make an email",
+    )
+    references = (
+        "above", "previous", "earlier", "last answer", "last response", "that email",
+        "this email", "the email", "that answer", "that response", "based on that",
+        "who asked", "asked the query", "the customer asked",
+    )
+    return any(action in text for action in edit_actions) and any(
+        reference in text for reference in references
+    )
+
+
 def query_department(
     question: str,
     department: str,
     model: str = None,
     top_k: int = None,
     stream: bool = False,
+    history: list[dict] = None,
 ) -> dict:
     """
     Full RAG query pipeline, scoped to a single department.
@@ -77,7 +99,7 @@ def query_department(
     t0 = time.perf_counter()
 
     # ── Stage 0: Instant Response Cache (< 1ms, zero LLM calls) ─────────
-    instant_answer = get_instant_response(question)
+    instant_answer = get_instant_response(question) if not history else None
     if instant_answer is not None:
         latency_ms = int((time.perf_counter() - t0) * 1000)
         log.info(f"[Instant] Returned cache hit in {latency_ms}ms — query='{question[:40]}'")
@@ -99,9 +121,36 @@ def query_department(
             "Respond warmly and professionally in one short sentence, welcoming them to MSU Corp Support "
             "and asking what platform issue you can help them resolve today."
         )
-        llm_res = ask_llm(greeting_prompt, model=model, stream=stream)
+        llm_res = ask_llm(
+            greeting_prompt, model=model, stream=stream, history=history
+        )
         latency_ms = int((time.perf_counter() - t0) * 1000)
         log.info(f"Greeting (LLM) handled — latency={latency_ms}ms")
+        return {
+            "stream": llm_res if stream else None,
+            "answer": llm_res if not stream else None,
+            "chunks": [],
+            "latency_ms": latency_ms,
+            "model": model or cfg.ollama_model,
+            "department": department,
+            "is_instant": False,
+        }
+
+    # Rewrite requests should use the prior answer, not unrelated retrieved chunks.
+    if is_followup_edit_request(question, history):
+        followup_prompt = (
+            "You are an assistant helping an MSU Corp support agent. The conversation "
+            "contains the customer's request and the previous support response. Follow "
+            "the new request using that conversation as the source. When rewriting or "
+            "drafting, preserve the established facts and steps; do not add procedures, "
+            "policies, or details that are not present in the conversation. Return only "
+            "the requested content.\n\n"
+            f"New request: {question}"
+        )
+        llm_res = ask_llm(
+            followup_prompt, model=model, stream=stream, history=history
+        )
+        latency_ms = int((time.perf_counter() - t0) * 1000)
         return {
             "stream": llm_res if stream else None,
             "answer": llm_res if not stream else None,

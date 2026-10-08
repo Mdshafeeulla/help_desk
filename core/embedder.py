@@ -1,18 +1,36 @@
 # core/embedder.py
 import numpy as np
+import torch
 from sentence_transformers import SentenceTransformer
 from core.config import cfg
 from utils.logger import log
 
 _model = None
 
+
+def _resolve_device() -> str:
+    configured_device = cfg.embed_device.lower()
+    if configured_device == "cpu":
+        return "cpu"
+
+    cuda_available = torch.cuda.is_available()
+
+    if configured_device == "auto":
+        return "cuda" if cuda_available else "cpu"
+    if configured_device.startswith("cuda") and not cuda_available:
+        log.warning("CUDA is unavailable; using CPU for embeddings.")
+        return "cpu"
+    return cfg.embed_device
+
+
 def _get_model():
     global _model
     if _model is None:
-        log.info(f"[Embedder] Loading '{cfg.embed_model}' on device='{cfg.embed_device}'...")
+        device = _resolve_device()
+        log.info(f"[Embedder] Loading '{cfg.embed_model}' on device='{device}'...")
         _model = SentenceTransformer(
             cfg.embed_model,
-            device=cfg.embed_device,
+            device=device,
             trust_remote_code=True,  # required for nomic-embed-text-v1.5
         )
         log.info("[Embedder] Model ready ✓")

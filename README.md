@@ -2,7 +2,7 @@
 
 A **local-first**, **privacy-preserving** RAG (Retrieval-Augmented Generation) system that lets different company departments query their own documents via an LLM — with **strict department-level data isolation (ABAC)**.
 
-> **No data leaves your machine.** Everything runs locally on your GPU.
+> **No data leaves your machine.** Everything runs locally; embeddings use CUDA when available and CPU otherwise.
 
 ---
 
@@ -23,14 +23,44 @@ A **local-first**, **privacy-preserving** RAG (Retrieval-Augmented Generation) s
 
 | Component | Minimum |
 |---|---|
-| GPU | NVIDIA GPU with 4+ GB VRAM (RTX 3050 or better) |
-| RAM | 16 GB |
-| CUDA | 11.8+ (we use 12.8) |
+| GPU | Optional; NVIDIA GPU for acceleration |
+| RAM | 16 GB recommended; CPU inference uses more time and memory |
+| CUDA | Only required for the optional NVIDIA Docker setup |
 | Disk | ~10 GB (models + DB) |
 
 ---
 
-## 🚀 Quick Start
+## 🐳 Run with Docker
+
+Docker Compose starts the Streamlit app and Ollama. The default image installs CPU-only PyTorch and runs on systems without a GPU.
+
+```bash
+docker compose up --build -d
+docker compose exec ollama ollama pull llama3.2:1b
+```
+
+Open `http://localhost:8501`. The LanceDB files are persisted under `data/`, and downloaded Ollama models are stored in a named Docker volume. To stop the services, run `docker compose down`; this keeps both sets of data.
+
+For NVIDIA acceleration, install the NVIDIA Container Toolkit and use a Docker runtime that supports GPU reservations. Build and start with the GPU override:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build -d
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml exec ollama ollama pull llama3.2:1b
+```
+
+The embedding model selects CUDA when it is available and falls back to CPU otherwise. The default Docker configuration is CPU-only; use the GPU override only on a host configured for NVIDIA containers.
+
+To run the prebuilt Linux image in a VMware Linux VM without rebuilding, copy `enterprise-rag-linux-amd64.tar` and `docker-compose.yml` to the VM, then run:
+
+```bash
+docker load -i enterprise-rag-linux-amd64.tar
+docker compose up --no-build -d
+docker compose exec ollama ollama pull llama3.2:1b
+```
+
+The archive is about 808 MB. The VM needs Docker Engine and the Docker Compose plugin; Ollama will be pulled automatically by Compose.
+
+## 🚀 Local Quick Start
 
 ### 1. Clone & Enter Project
 
@@ -45,13 +75,13 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
-### 3. Install PyTorch with CUDA (if not already installed)
+### 3. Install PyTorch
 
 ```bash
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 ```
 
-> Skip this if you already have `torch` with CUDA. Check with:
+> For NVIDIA acceleration, install `torch` and `torchvision` from the matching CUDA index instead. Check CUDA availability with:
 > ```bash
 > python -c "import torch; print(torch.cuda.is_available())"
 > ```
@@ -190,6 +220,7 @@ Edit `core/config.py` to customize:
 | `top_k` | 6 | Chunks retrieved per query |
 | `semantic_weight` | 0.65 | ANN vs BM25 balance |
 | `ollama_model` | qwen2.5:7b-instruct-q4_K_M | Default LLM |
+| `ollama_num_ctx` | 1024 | Ollama context window in tokens; lower values use less RAM/VRAM, but may not fit long prompts |
 
 ---
 
@@ -198,7 +229,7 @@ Edit `core/config.py` to customize:
 | Component | Technology |
 |---|---|
 | LLM | Ollama (Qwen2.5 7B Q4) |
-| Embedder | nomic-embed-text-v1.5 (CUDA) |
+| Embedder | nomic-embed-text-v1.5 (CUDA when available, otherwise CPU) |
 | Vector DB | LanceDB (embedded, Rust) |
 | Search | Hybrid ANN + BM25 |
 | Filtering | ABAC via LanceDB metadata |
