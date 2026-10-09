@@ -12,27 +12,71 @@ from core.instant_responses import get_instant_response
 from utils.logger import log
 
 
-def index_documents(text: str, department: str, source: str) -> int:
+def index_documents(
+    text: str,
+    department: str,
+    source: str,
+    progress_callback=None,
+) -> int:
     """
     Full indexing pipeline: text → chunks → embeddings → LanceDB.
     Tagged with department for ABAC isolation.
 
+    Processes embeddings in batches to prevent CPU overload on large documents.
+
+    Args:
+        text: document text to index
+        department: department tag for ABAC
+        source: source filename
+        progress_callback: optional callable(step_name, current, total) for progress
+
     Returns number of chunks indexed.
     """
     t0 = time.perf_counter()
+
+    # Step 1: Chunk text
+    if progress_callback:
+        progress_callback("chunking", 0, 1)
 
     chunks = chunk_text(text)
     if not chunks:
         log.warning(f"No chunks produced from source='{source}'")
         return 0
 
-    texts = [c["text"] for c in chunks]
-    embeddings = embed_texts(texts)
+    log.info(f"[Pipeline] {len(chunks)} chunks from source='{source}'")
 
-    n = store.add_documents(chunks, embeddings, department, source)
+    if progress_callback:
+        progress_callback("chunking", 1, 1)
+
+    # Step 2: Embed in batches (prevents CPU overload)
+    texts = [c["text"] for c in chunks]
+    EMBED_BATCH = 16  # smaller batches = friendlier CPU usage
+
+    def embed_progress(batch_num, total_batches):
+        if progress_callback:
+            progress_callback("embedding", batch_num, total_batches)
+
+    embeddings = embed_texts(texts, batch_size=EMBED_BATCH, progress_callback=embed_progress)
+
+    # Step 3: Store in batches
+    if progress_callback:
+        progress_callback("storing", 0, 1)
+
+    STORE_BATCH = 100
+    total_stored = 0
+
+    for i in range(0, len(chunks), STORE_BATCH):
+        batch_chunks = chunks[i : i + STORE_BATCH]
+        batch_embeddings = embeddings[i : i + STORE_BATCH]
+        n = store.add_documents(batch_chunks, batch_embeddings, department, source)
+        total_stored += n
+
+    if progress_callback:
+        progress_callback("storing", 1, 1)
+
     elapsed = time.perf_counter() - t0
-    log.info(f"Indexed {n} chunks in {elapsed:.2f}s — dept={department}, source={source}")
-    return n
+    log.info(f"Indexed {total_stored} chunks in {elapsed:.2f}s — dept={department}, source={source}")
+    return total_stored
 
 
 GREETINGS = {
