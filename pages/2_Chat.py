@@ -176,11 +176,30 @@ with st.sidebar:
     st.markdown('<div class="sidebar-section-title">⚙️ Model Settings</div>', unsafe_allow_html=True)
     model = st.selectbox("LLM Model", cfg.available_models, label_visibility="collapsed")
     top_k = st.slider("Chunks to retrieve", min_value=3, max_value=15, value=cfg.top_k)
+    context_window = st.slider(
+        "Context window (tokens)",
+        min_value=2048,
+        max_value=32768,
+        step=1024,
+        value=min(max(cfg.ollama_num_ctx, 2048), 32768),
+        help=(
+            "Larger windows let the model use more document and chat history, "
+            "but require more RAM/VRAM from the Ollama server."
+        ),
+    )
 
     # Pre-warm model in background thread when selected
-    if "active_model" not in st.session_state or st.session_state.active_model != model:
+    if (
+        st.session_state.get("active_model") != model
+        or st.session_state.get("active_context_window") != context_window
+    ):
         st.session_state.active_model = model
-        threading.Thread(target=prewarm_model, args=(model,), daemon=True).start()
+        st.session_state.active_context_window = context_window
+        threading.Thread(
+            target=prewarm_model,
+            args=(model, context_window),
+            daemon=True,
+        ).start()
 
     st.divider()
 
@@ -273,6 +292,7 @@ if prompt := st.chat_input("Describe your issue or ask a question..."):
                         department=department,
                         model=model,
                         top_k=top_k,
+                        num_ctx=context_window,
                         stream=False,
                         history=st.session_state.messages[:-1],
                     )
@@ -284,6 +304,7 @@ if prompt := st.chat_input("Describe your issue or ask a question..."):
                             department=department,
                             model=model,
                             top_k=top_k,
+                            num_ctx=context_window,
                             stream=True,
                             history=st.session_state.messages[:-1],
                         )
@@ -317,6 +338,7 @@ if prompt := st.chat_input("Describe your issue or ask a question..."):
                     f"⏱ {total_latency_ms}ms · "
                     f"🔒 IT SUPPORT · "
                     f"🤖 {model_label} · "
+                    f"🧠 {context_window:,} ctx · "
                     f"{chunks_label}"
                 )
                 st.caption(metadata_str)

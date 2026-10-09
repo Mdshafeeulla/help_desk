@@ -3,6 +3,8 @@ import streamlit as st
 from core.pipeline import index_documents
 from core.store import store
 from core.config import cfg
+from core.admin_auth import require_admin_access
+from core.monitoring import format_bytes, is_out_of_memory_error, resource_snapshot
 from utils.pdf_parser import extract_pdf_text
 from utils.image_parser import extract_image_text
 from utils.word_parser import extract_word_text
@@ -10,6 +12,18 @@ import json
 import time
 
 st.set_page_config(page_title="MSU Corp Admin", page_icon="🔑", layout="wide")
+require_admin_access()
+
+
+def show_memory_error(error):
+    if not is_out_of_memory_error(error):
+        raise error
+    st.error(
+        "Indexing stopped because the process ran out of memory. The available "
+        "memory is not enough to run this workload; increase the server/container "
+        "memory and try again."
+    )
+    st.stop()
 
 # ── Premium CSS ────────────────────────────────────────────────────────
 st.markdown("""
@@ -295,10 +309,11 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ── Tabs ──────────────────────────────────────────────────────────────
-tab_upload, tab_manage, tab_stats = st.tabs([
+tab_upload, tab_manage, tab_stats, tab_recycle = st.tabs([
     "📥  Upload Documents",
     "🗂️  Manage Documents",
-    "📊  Dashboard",
+    "📊  Monitoring & Dashboard",
+    "♻️  Recycle Bin",
 ])
 
 # ━━ Tab 1: Upload ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -374,25 +389,27 @@ with tab_upload:
 
             step_status = st.empty()
 
-            # Extract text
-            file_bytes = f.read()
             t0 = time.time()
 
-            if fname.endswith(".pdf"):
-                step_status.info(f"📄 Extracting text from PDF: {f.name}...")
-                text = extract_pdf_text(file_bytes)
-            elif any(fname.endswith(ext) for ext in [".doc", ".docx"]):
-                step_status.info(f"📝 Extracting text from Word: {f.name}...")
-                text = extract_word_text(file_bytes, filename=f.name)
-            elif any(fname.endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".bmp"]):
-                step_status.info(f"🖼️ Running OCR on image: {f.name}...")
-                text = extract_image_text(file_bytes)
-            else:
-                step_status.info(f"📃 Reading text file: {f.name}...")
-                try:
-                    text = file_bytes.decode("utf-8")
-                except UnicodeDecodeError:
-                    text = file_bytes.decode("latin-1")
+            try:
+                file_bytes = f.read()
+                if fname.endswith(".pdf"):
+                    step_status.info(f"📄 Extracting text from PDF: {f.name}...")
+                    text = extract_pdf_text(file_bytes)
+                elif any(fname.endswith(ext) for ext in [".doc", ".docx"]):
+                    step_status.info(f"📝 Extracting text from Word: {f.name}...")
+                    text = extract_word_text(file_bytes, filename=f.name)
+                elif any(fname.endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp", ".bmp"]):
+                    step_status.info(f"🖼️ Running OCR on image: {f.name}...")
+                    text = extract_image_text(file_bytes)
+                else:
+                    step_status.info(f"📃 Reading text file: {f.name}...")
+                    try:
+                        text = file_bytes.decode("utf-8")
+                    except UnicodeDecodeError:
+                        text = file_bytes.decode("latin-1")
+            except (MemoryError, RuntimeError) as error:
+                show_memory_error(error)
 
             extract_time = time.time() - t0
 
@@ -409,7 +426,24 @@ with tab_upload:
 
             # Index with batched processing
             t1 = time.time()
-            n = index_documents(text, department=dept_lower, source=f.name)
+
+            def report_index_progress(phase, current, total):
+                snapshot = resource_snapshot()
+                step_status.info(
+                    f"Indexing {f.name} — {phase}: {current}/{total} · "
+                    f"CPU {snapshot['indexing']['cpu_percent']:.1f}% · "
+                    f"RAM {snapshot['indexing']['memory_mb']:.0f} MB"
+                )
+
+            try:
+                n = index_documents(
+                    text,
+                    department=dept_lower,
+                    source=f.name,
+                    progress_callback=report_index_progress,
+                )
+            except (MemoryError, RuntimeError) as error:
+                show_memory_error(error)
             index_time = time.time() - t1
 
             step_status.empty()
@@ -468,7 +502,20 @@ with tab_upload:
                         st.warning(f"⚠️ **{title}** — missing 'content', skipping.")
                         continue
 
-                    n = index_documents(content, department=dept, source=title)
+                    def report_json_index_progress(phase, current, total):
+                        snapshot = resource_snapshot()
+                        status.info(
+                            f"Indexing {title} — {phase}: {current}/{total} · "
+                            f"CPU {snapshot['indexing']['cpu_percent']:.1f}% · "
+                            f"RAM {snapshot['indexing']['memory_mb']:.0f} MB"
+                        )
+
+                    n = index_documents(
+                        content,
+                        department=dept,
+                        source=title,
+                        progress_callback=report_json_index_progress,
+                    )
                     st.success(f"✅ **{title}** → {n} chunks indexed")
                     success_count += 1
 
@@ -478,6 +525,8 @@ with tab_upload:
                 progress_bar.empty()
                 if success_count > 0:
                     st.balloons()
+        except (MemoryError, RuntimeError) as error:
+            show_memory_error(error)
         except json.JSONDecodeError as e:
             st.error(f"Invalid JSON format: {e}")
 
@@ -516,8 +565,101 @@ with tab_manage:
         </div>
         """, unsafe_allow_html=True)
 
+# ━━ Tab 3: Recycle Bin ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+with tab_recycle:
+    st.markdown('<div class="section-header">♻️ Recover deleted documents</div>', unsafe_allow_html=True)
+    deleted_documents = store.list_recycle_bin()
+    if not deleted_documents:
+        st.info("The recycle bin is empty. Documents removed from the index will appear here.")
+    else:
+        st.caption(
+            "Documents removed from the knowledge base are retained here until restored. "
+            "Restoring is blocked if a document with the same name is already indexed."
+        )
+        for item in deleted_documents:
+            col_document, col_deleted, col_restore = st.columns([3, 2, 1])
+            col_document.markdown(
+                f"📄 **{item['source']}** · {item['department'].upper()}"
+            )
+            col_deleted.caption(f"Deleted: {item['deleted_at']}")
+            if col_restore.button(
+                "Restore",
+                key=f"restore_{item['deletion_id']}",
+                use_container_width=True,
+            ):
+                try:
+                    store.restore_source(item["deletion_id"])
+                except ValueError as error:
+                    st.warning(str(error))
+                else:
+                    st.success(f"Restored '{item['source']}'.")
+                    st.rerun()
+
 # ━━ Tab 3: Dashboard ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 with tab_stats:
+    st.markdown('<div class="section-header">🖥️ Server resource monitoring</div>', unsafe_allow_html=True)
+    if st.button("Refresh system metrics", key="refresh_system_metrics"):
+        st.rerun()
+
+    resources = resource_snapshot()
+    memory_percent = (
+        resources["memory_used_bytes"] / resources["memory_total_bytes"]
+        if resources["memory_total_bytes"]
+        else 0.0
+    )
+    disk_percent = (
+        resources["disk_used_bytes"] / resources["disk_total_bytes"]
+        if resources["disk_total_bytes"]
+        else 0.0
+    )
+    cpu_cols = st.columns(3)
+    cpu_cols[0].metric("Logical CPU cores", resources["cpu_cores"])
+    cpu_cols[1].metric("Cores available to process", resources["cpu_cores_available"])
+    cpu_cols[2].metric("System CPU utilization", f"{resources['system_cpu_percent']:.1f}%")
+
+    memory_cols = st.columns(3)
+    memory_cols[0].metric("Total / effective RAM", format_bytes(resources["memory_total_bytes"]))
+    memory_cols[1].metric("RAM in use", format_bytes(resources["memory_used_bytes"]))
+    memory_cols[2].metric("RAM remaining", format_bytes(resources["memory_available_bytes"]))
+    st.progress(min(memory_percent, 1.0), text=f"Memory use: {memory_percent:.1%}")
+
+    disk_cols = st.columns(3)
+    disk_cols[0].metric("Storage capacity", format_bytes(resources["disk_total_bytes"]))
+    disk_cols[1].metric("Storage used", format_bytes(resources["disk_used_bytes"]))
+    disk_cols[2].metric("Storage remaining", format_bytes(resources["disk_free_bytes"]))
+    st.progress(min(disk_percent, 1.0), text=f"Storage use: {disk_percent:.1%}")
+    st.caption(
+        f"Storage is measured on the filesystem containing `{cfg.db_path}`. "
+        "RAM reflects the container limit when Linux cgroup limits are available."
+    )
+
+    indexing = resources["indexing"]
+    st.markdown("#### Indexing computation")
+    if indexing["active"]:
+        st.info(
+            f"Indexing **{indexing['source']}** · phase: **{indexing['phase']}** · "
+            f"elapsed: {indexing['elapsed_seconds']:.1f}s"
+        )
+    else:
+        st.caption(
+            f"Most recent job: {indexing['source'] or 'None'} · "
+            f"status: {indexing['status']}"
+        )
+    index_cols = st.columns(3)
+    index_cols[0].metric("App CPU use", f"{indexing['cpu_percent']:.1f}%")
+    index_cols[1].metric("App RAM use", f"{indexing['memory_mb']:.0f} MB")
+    index_cols[2].metric("Peak RAM during indexing", f"{indexing['peak_memory_mb']:.0f} MB")
+    st.caption(
+        f"Peak app CPU during indexing: {indexing['peak_cpu_percent']:.1f}%. "
+        "Process CPU can exceed 100% when multiple cores are used."
+    )
+    if indexing["status"] == "Out of memory":
+        st.error(
+            "The last indexing job ran out of memory. Available memory was not "
+            "enough to run the workload; increase server/container memory before retrying."
+        )
+
+    st.divider()
     st.markdown('<div class="section-header">📊 Knowledge Base Analytics</div>', unsafe_allow_html=True)
 
     if stats:

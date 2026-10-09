@@ -24,7 +24,7 @@ class Config:
 
     # ── LLM ──────────────────────────────────────────────────────────
     ollama_model: str = "llama3.2:1b"
-    ollama_num_ctx: int = 1024          # Lower context window uses less RAM/VRAM
+    ollama_num_ctx: int = int(os.getenv("OLLAMA_NUM_CTX", "8192"))
 
     # ── Departments ───────────────────────────────────────────────────
     default_department: str = "it"

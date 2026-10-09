@@ -1,17 +1,35 @@
 # core/prompt_builder.py
 
 
-def build_prompt(chunks: list[dict], question: str, department: str = "it") -> str:
+def build_prompt(
+    chunks: list[dict],
+    question: str,
+    department: str = "it",
+    max_context_tokens: int | None = None,
+) -> str:
     """
     Build a structured prompt for the MSU Corp support LLM.
     Grounds the answer in retrieved support knowledge base documents.
     """
     context_parts = []
+    remaining_chars = max_context_tokens * 4 if max_context_tokens is not None else None
     for i, c in enumerate(chunks, 1):
-        context_parts.append(
+        header = (
             f"[Support Doc {i}: {c['source']} | Relevance: {c['score']:.2f}]\n"
-            f"{c['text']}"
         )
+        text = c["text"]
+        if remaining_chars is not None:
+            available_text_chars = remaining_chars - len(header)
+            if available_text_chars <= 0:
+                break
+            if len(text) > available_text_chars:
+                text = text[:available_text_chars].rsplit(" ", 1)[0]
+                context_parts.append(
+                    f"{header}{text}\n[Document context truncated to fit the selected context window.]"
+                )
+                break
+            remaining_chars -= len(header) + len(text)
+        context_parts.append(f"{header}{text}")
     context = "\n\n---\n\n".join(context_parts)
 
     return f"""You are the **MSU Corp Support Assistant** — an AI-powered L1 customer support agent for MSU Corp.

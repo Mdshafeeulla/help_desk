@@ -41,6 +41,38 @@ docker compose exec ollama ollama pull llama3.2:1b
 
 Open `http://localhost:8501`. The LanceDB files are persisted under `data/`, and downloaded Ollama models are stored in a named Docker volume. To stop the services, run `docker compose down`; this keeps both sets of data.
 
+### Admin login, monitoring, and recovery
+
+The admin console and its **Monitoring & Dashboard** tab require the same login.
+The first visit to **Admin Console** displays an in-app form to create the admin
+account; enter `MSU` as the username and choose and confirm an admin password.
+No terminal or secrets-file setup is needed. The app stores a salted password
+hash in `data/admin_account.json`, not the plain-text password. This file is
+excluded from Git and persists with the existing `data/` Docker volume. Protect
+and back up the data directory; deleting the account file requires creating the
+admin account again on the next visit.
+
+The monitoring dashboard reports CPU cores, system CPU use, effective/available
+RAM, app CPU and RAM use during indexing, indexing peaks/status, and the capacity
+of the filesystem containing the LanceDB database. Linux container RAM limits
+are used when cgroup data is available. Refresh the dashboard to update live
+system readings. An out-of-memory failure is reported with guidance to increase
+server or container memory.
+
+### Chat context window
+
+The Chat sidebar has a **Context window (tokens)** control, defaulting to 8,192.
+Raise it when the model needs more document or conversation context; this
+increases Ollama RAM/VRAM requirements, and the selected model/server must support
+the requested size. RAG requests include retrieved document passages and recent
+chat turns, within separate budgets so there is still room for the answer.
+
+Removing documents from the admin console moves their indexed content to the
+recycle bin, where it can be restored unless a same-named document is already
+active. The app does not retain the original uploaded file bytes; the recycle
+bin restores the document's indexed content. Protect the `data/` directory with
+regular backups to recover from manual deletion of database files or host data.
+
 For NVIDIA acceleration, install the NVIDIA Container Toolkit and use a Docker runtime that supports GPU reservations. Build and start with the GPU override:
 
 ```bash
@@ -228,7 +260,7 @@ Edit `core/config.py` to customize:
 
 | Component | Technology |
 |---|---|
-| LLM | Ollama (Qwen2.5 7B Q4) |
+| LLM | Ollama (Mistral Q4) |
 | Embedder | nomic-embed-text-v1.5 (CUDA when available, otherwise CPU) |
 | Vector DB | LanceDB (embedded, Rust) |
 | Search | Hybrid ANN + BM25 |

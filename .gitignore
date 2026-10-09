@@ -23,6 +23,6 @@ IT_Policy_Infographic.png
 Thumbs.db
 .DS_Store
 
-# Environment
+# Environment and local admin credentials
 .env
-
+data/admin_account.json

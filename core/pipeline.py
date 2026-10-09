@@ -9,10 +9,32 @@ from core.retriever import hybrid_search
 from core.prompt_builder import build_prompt
 from core.llm import ask_llm
 from core.instant_responses import get_instant_response
+from core.monitoring import track_indexing
 from utils.logger import log
 
 
 def index_documents(
+    text: str,
+    department: str,
+    source: str,
+    progress_callback=None,
+) -> int:
+    """Index a source while recording per-job compute and memory usage."""
+    with track_indexing(source) as record_progress:
+        def combined_progress(step_name, current, total):
+            if progress_callback:
+                progress_callback(step_name, current, total)
+            record_progress(step_name, current, total)
+
+        return _index_documents(
+            text,
+            department,
+            source,
+            progress_callback=combined_progress,
+        )
+
+
+def _index_documents(
     text: str,
     department: str,
     source: str,
@@ -126,6 +148,7 @@ def query_department(
     top_k: int = None,
     stream: bool = False,
     history: list[dict] = None,
+    num_ctx: int = None,
 ) -> dict:
     """
     Full RAG query pipeline, scoped to a single department.
@@ -141,6 +164,7 @@ def query_department(
     Returns dict with keys: answer/stream, chunks, latency_ms, model, is_instant
     """
     t0 = time.perf_counter()
+    num_ctx = num_ctx or cfg.ollama_num_ctx
 
     # ── Stage 0: Instant Response Cache (< 1ms, zero LLM calls) ─────────
     instant_answer = get_instant_response(question) if not history else None
@@ -166,7 +190,11 @@ def query_department(
             "and asking what platform issue you can help them resolve today."
         )
         llm_res = ask_llm(
-            greeting_prompt, model=model, stream=stream, history=history
+            greeting_prompt,
+            model=model,
+            stream=stream,
+            history=history,
+            num_ctx=num_ctx,
         )
         latency_ms = int((time.perf_counter() - t0) * 1000)
         log.info(f"Greeting (LLM) handled — latency={latency_ms}ms")
@@ -187,12 +215,19 @@ def query_department(
             "contains the customer's request and the previous support response. Follow "
             "the new request using that conversation as the source. When rewriting or "
             "drafting, preserve the established facts and steps; do not add procedures, "
-            "policies, or details that are not present in the conversation. Return only "
-            "the requested content.\n\n"
+            "policies, or details that are not present in the conversation. Never turn "
+            "a planned, pending, or conditional action into a completed event; for "
+            "example, do not say a submission was approved unless the conversation "
+            "explicitly says it was approved. If a status or name is unknown, use "
+            "neutral wording or a clear placeholder. Return only the requested content.\n\n"
             f"New request: {question}"
         )
         llm_res = ask_llm(
-            followup_prompt, model=model, stream=stream, history=history
+            followup_prompt,
+            model=model,
+            stream=stream,
+            history=history,
+            num_ctx=num_ctx,
         )
         latency_ms = int((time.perf_counter() - t0) * 1000)
         return {
@@ -224,10 +259,21 @@ def query_department(
         )
 
     # 4. Build prompt
-    prompt = build_prompt(retrieved, question, department)
+    prompt = build_prompt(
+        retrieved,
+        question,
+        department,
+        max_context_tokens=num_ctx * 50 // 100,
+    )
 
     # 5. LLM generation
-    llm_res = ask_llm(prompt, model=model, stream=stream)
+    llm_res = ask_llm(
+        prompt,
+        model=model,
+        stream=stream,
+        history=history,
+        num_ctx=num_ctx,
+    )
 
     latency_ms = int((time.perf_counter() - t0) * 1000)
     log.info(
