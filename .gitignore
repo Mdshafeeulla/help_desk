@@ -26,3 +26,6 @@ Thumbs.db
 # Environment and local admin credentials
 .env
 data/admin_account.json
+
+sample.pdf
+sample.md
