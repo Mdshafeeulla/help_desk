@@ -32,6 +32,7 @@ def _get_model():
             cfg.embed_model,
             device=device,
             trust_remote_code=True,  # required for nomic-embed-text-v1.5
+            prompts={"query": "search_query: ", "document": "search_document: "},
         )
         log.info("[Embedder] Model ready ✓")
     return _model
