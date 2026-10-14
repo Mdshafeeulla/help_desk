@@ -49,6 +49,56 @@ def _save_account(username: str, password: str) -> None:
         account_file.write(account)
 
 
+def _render_auth_header(st, title: str, description: str) -> None:
+    st.markdown(
+        """
+        <style>
+            .auth-heading {
+                text-align: center;
+                padding: 2.5rem 0 1rem;
+            }
+            .auth-kicker {
+                color: #a5b4fc;
+                font-size: 0.78rem;
+                font-weight: 600;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                margin-bottom: 0.8rem;
+            }
+            .auth-heading h1 {
+                color: #f1f5f9;
+                font-size: 2rem;
+                font-weight: 700;
+                letter-spacing: -0.03em;
+                margin: 0 0 0.5rem;
+            }
+            .auth-heading p {
+                color: #94a3b8;
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin: 0 auto;
+                max-width: 28rem;
+            }
+            @media (max-width: 640px) {
+                .auth-heading { padding-top: 1.5rem; }
+                .auth-heading h1 { font-size: 1.65rem; }
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f"""
+        <div class="auth-heading">
+            <div class="auth-kicker">🔒 MSU Corp Admin Portal</div>
+            <h1>{title}</h1>
+            <p>{description}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def require_admin_access() -> None:
     """Require the locally configured admin account before showing the console."""
     import streamlit as st
@@ -64,16 +114,35 @@ def require_admin_access() -> None:
         return
 
     if account is None:
-        st.title("Set up the Admin Account")
-        st.info(
-            "Create the admin account once. Its password is stored locally as a "
-            "salted hash and is never written in plain text."
-        )
-        with st.form("admin_account_setup"):
-            username = st.text_input("Admin username", value="MSU")
-            password = st.text_input("Create admin password", type="password")
-            confirm_password = st.text_input("Confirm password", type="password")
-            submitted = st.form_submit_button("Create admin account", type="primary")
+        _, auth_column, _ = st.columns([1, 1.1, 1])
+        with auth_column:
+            _render_auth_header(
+                st,
+                "Create your admin account",
+                "Set up secure access to manage documents and monitor the knowledge base.",
+            )
+            with st.container(border=True):
+                with st.form("admin_account_setup"):
+                    username = st.text_input(
+                        "Admin username",
+                        value="MSU",
+                        help="This username will be used whenever you sign in.",
+                    )
+                    password = st.text_input(
+                        "Create password",
+                        type="password",
+                        help="Use at least 12 characters.",
+                    )
+                    confirm_password = st.text_input(
+                        "Confirm password",
+                        type="password",
+                    )
+                    submitted = st.form_submit_button(
+                        "Create admin account",
+                        type="primary",
+                        use_container_width=True,
+                    )
+                st.caption("Your password is stored locally as a salted hash.")
 
         if submitted:
             if not username.strip():
@@ -95,11 +164,30 @@ def require_admin_access() -> None:
                     st.rerun()
         st.stop()
 
-    st.title("Admin and Monitoring Login")
-    with st.form("admin_login"):
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        submitted = st.form_submit_button("Sign in", type="primary")
+    _, auth_column, _ = st.columns([1, 1.1, 1])
+    with auth_column:
+        _render_auth_header(
+            st,
+            "Welcome back",
+            "Sign in to manage support documents and view system monitoring.",
+        )
+        with st.container(border=True):
+            with st.form("admin_login"):
+                username = st.text_input(
+                    "Username",
+                    placeholder="Enter your admin username",
+                )
+                password = st.text_input(
+                    "Password",
+                    type="password",
+                    placeholder="Enter your password",
+                )
+                submitted = st.form_submit_button(
+                    "Sign in to Admin Console",
+                    type="primary",
+                    use_container_width=True,
+                )
+            st.caption("Authorized administrators only")
 
     if submitted:
         salt = bytes.fromhex(account["salt"])
