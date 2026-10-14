@@ -52,6 +52,12 @@ st.markdown("""
         line-height: 1.1;
     }
 
+    .hero-brand {
+        color: #fff;
+        background: none;
+        -webkit-text-fill-color: #fff;
+    }
+
     .hero-subtitle {
         font-size: 1.05rem;
         color: #94a3b8;
@@ -209,7 +215,7 @@ st.markdown("""
 st.markdown("""
 <div class="hero-container">
     <div class="hero-badge">🔒 Enterprise-Grade · Private & Secure</div>
-    <div class="hero-title">🛡️ MSU Corp<br>Support Assistant</div>
+    <div class="hero-title">🛡️ <span class="hero-brand">MSU Corp</span><br>Support Assistant</div>
     <div class="hero-subtitle">
         AI-powered 24/7 L1 Customer Support — Resolve platform issues instantly 
         with grounded, knowledge-base answers. No wait times, no ticket queues.
