@@ -15,6 +15,7 @@ A **local-first**, **privacy-preserving** RAG (Retrieval-Augmented Generation) s
 - 🎯 **MRL Embeddings** — 256-dim Matryoshka embeddings for fast ANN search
 - 📄 **PDF + TXT Upload** — PyMuPDF for fast, accurate text extraction
 - 💬 **Chat Interface** — Multi-turn Q&A with source attribution
+- 📋 **Copy Chat History** — Copy the full current conversation as a transcript
 - 🔑 **Admin Panel** — Upload docs, manage departments, view stats
 
 ---

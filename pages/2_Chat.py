@@ -254,6 +254,16 @@ if st.session_state.active_dept != department:
     st.session_state.messages = []
     st.session_state.active_dept = department
 
+# Make the current conversation easy to copy as a single transcript.
+if st.session_state.messages:
+    transcript = "\n\n".join(
+        f"{msg['role'].capitalize()}:\n{msg['content']}"
+        for msg in st.session_state.messages
+    )
+    with st.expander("📋 Copy conversation"):
+        st.caption("Use the copy icon on the transcript to copy the full conversation.")
+        st.code(transcript, language=None)
+
 # Render existing messages
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
