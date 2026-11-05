@@ -63,6 +63,6 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Update the deployment
-        run: kubectl -n helpdesk set image deployment/helpdesk helpdesk=${{ env.IMAGE }}:${{ github.sha }}
+        run: kubectl -n help-desk set image deployment/help-desk app=${{ env.IMAGE }}:${{ github.sha }}
       - name: Wait for rollout
-        run: kubectl -n helpdesk rollout status deployment/helpdesk --timeout=900s
+        run: kubectl -n help-desk rollout status deployment/help-desk --timeout=900s
