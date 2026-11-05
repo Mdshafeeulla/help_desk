@@ -39,15 +39,15 @@ st.markdown("""
         text-align: center;
         padding: 2rem 1rem 1.5rem;
         margin-bottom: 1.5rem;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.08) 50%, rgba(236, 72, 153, 0.08) 100%);
+        background: linear-gradient(135deg, rgba(158, 158, 158, 0.12), rgba(189, 189, 189, 0.08));
         border-radius: 20px;
-        border: 1px solid rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(189, 189, 189, 0.2);
     }
 
     .admin-title {
         font-size: 2.2rem;
         font-weight: 800;
-        background: linear-gradient(135deg, #818cf8 0%, #a78bfa 40%, #c084fc 70%, #e879f9 100%);
+        background: linear-gradient(135deg, #9e9e9e 0%, #bdbdbd 50%, #e0e0e0 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 0.3rem;
@@ -69,7 +69,7 @@ st.markdown("""
     }
 
     .stat-card {
-        background: linear-gradient(145deg, rgba(30, 30, 50, 0.6), rgba(40, 40, 65, 0.4));
+        background: linear-gradient(145deg, rgba(55, 55, 55, 0.75), rgba(40, 40, 40, 0.65));
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 16px;
         padding: 1.5rem;
@@ -80,8 +80,8 @@ st.markdown("""
 
     .stat-card:hover {
         transform: translateY(-3px);
-        border-color: rgba(129, 140, 248, 0.3);
-        box-shadow: 0 8px 32px rgba(129, 140, 248, 0.1);
+        border-color: rgba(189, 189, 189, 0.4);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
     }
 
     .stat-icon {
@@ -92,7 +92,7 @@ st.markdown("""
     .stat-value {
         font-size: 2rem;
         font-weight: 700;
-        color: #e2e8f0;
+        color: #f1f1f1;
         line-height: 1.2;
     }
 
@@ -107,8 +107,8 @@ st.markdown("""
 
     /* ── Upload Zone ─────────────────────────────────── */
     .upload-zone {
-        background: linear-gradient(145deg, rgba(30, 30, 50, 0.5), rgba(25, 25, 45, 0.5));
-        border: 2px dashed rgba(129, 140, 248, 0.25);
+        background: linear-gradient(145deg, rgba(55, 55, 55, 0.65), rgba(40, 40, 40, 0.65));
+        border: 2px dashed rgba(189, 189, 189, 0.35);
         border-radius: 20px;
         padding: 2rem;
         text-align: center;
@@ -117,8 +117,8 @@ st.markdown("""
     }
 
     .upload-zone:hover {
-        border-color: rgba(129, 140, 248, 0.5);
-        background: linear-gradient(145deg, rgba(35, 35, 55, 0.6), rgba(30, 30, 50, 0.6));
+        border-color: rgba(224, 224, 224, 0.6);
+        background: linear-gradient(145deg, rgba(65, 65, 65, 0.75), rgba(50, 50, 50, 0.75));
     }
 
     /* ── Section Headers ─────────────────────────────── */
@@ -128,7 +128,7 @@ st.markdown("""
         gap: 0.6rem;
         font-size: 1.15rem;
         font-weight: 600;
-        color: #e2e8f0;
+        color: #f1f1f1;
         margin: 1.5rem 0 1rem;
         padding-bottom: 0.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -140,7 +140,7 @@ st.markdown("""
         align-items: center;
         justify-content: space-between;
         padding: 0.8rem 1.2rem;
-        background: rgba(30, 30, 50, 0.4);
+        background: rgba(55, 55, 55, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: 12px;
         margin-bottom: 0.5rem;
@@ -148,8 +148,8 @@ st.markdown("""
     }
 
     .doc-item:hover {
-        background: rgba(40, 40, 60, 0.5);
-        border-color: rgba(129, 140, 248, 0.2);
+        background: rgba(70, 70, 70, 0.7);
+        border-color: rgba(189, 189, 189, 0.35);
     }
 
     .doc-name {
@@ -176,9 +176,9 @@ st.markdown("""
     }
 
     .badge-info {
-        background: rgba(99, 102, 241, 0.15);
-        color: #818cf8;
-        border: 1px solid rgba(99, 102, 241, 0.2);
+        background: rgba(158, 158, 158, 0.18);
+        color: #d1d1d1;
+        border: 1px solid rgba(189, 189, 189, 0.3);
     }
 
     .badge-warning {
@@ -200,9 +200,9 @@ st.markdown("""
     }
 
     .progress-step.active {
-        background: rgba(99, 102, 241, 0.1);
-        color: #818cf8;
-        border: 1px solid rgba(99, 102, 241, 0.2);
+        background: rgba(158, 158, 158, 0.14);
+        color: #d1d1d1;
+        border: 1px solid rgba(189, 189, 189, 0.3);
     }
 
     .progress-step.done {
@@ -216,12 +216,12 @@ st.markdown("""
         align-items: center;
         gap: 0.8rem;
         padding: 1rem 1.5rem;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.08));
-        border: 1px solid rgba(99, 102, 241, 0.2);
+        background: linear-gradient(135deg, rgba(158, 158, 158, 0.15), rgba(189, 189, 189, 0.1));
+        border: 1px solid rgba(189, 189, 189, 0.3);
         border-radius: 14px;
         margin-bottom: 1.5rem;
         font-size: 0.9rem;
-        color: #c4b5fd;
+        color: #e0e0e0;
     }
 
     .info-banner-icon {
@@ -231,7 +231,7 @@ st.markdown("""
     /* ── Tab styling overrides ────────────────────────── */
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.5rem;
-        background: rgba(15, 15, 30, 0.3);
+        background: rgba(45, 45, 45, 0.7);
         padding: 0.4rem;
         border-radius: 14px;
     }
@@ -262,8 +262,8 @@ st.markdown("""
     }
 
     @keyframes pulse-glow {
-        0%, 100% { box-shadow: 0 0 20px rgba(129, 140, 248, 0.1); }
-        50% { box-shadow: 0 0 30px rgba(129, 140, 248, 0.2); }
+        0%, 100% { box-shadow: 0 0 20px rgba(189, 189, 189, 0.1); }
+        50% { box-shadow: 0 0 30px rgba(189, 189, 189, 0.2); }
     }
 
     .animate-in {
@@ -344,14 +344,14 @@ with tab_upload:
         with col_info1:
             st.markdown(f"""
             <div class="stat-card" style="padding: 1rem;">
-                <div style="font-size: 1.4rem; font-weight: 700; color: #818cf8;">{file_count}</div>
+                <div style="font-size: 1.4rem; font-weight: 700; color: #bdbdbd;">{file_count}</div>
                 <div class="stat-label">Files Selected</div>
             </div>
             """, unsafe_allow_html=True)
         with col_info2:
             st.markdown(f"""
             <div class="stat-card" style="padding: 1rem;">
-                <div style="font-size: 1.4rem; font-weight: 700; color: #c084fc;">{size_str}</div>
+                <div style="font-size: 1.4rem; font-weight: 700; color: #d1d1d1;">{size_str}</div>
                 <div class="stat-label">Total Size</div>
             </div>
             """, unsafe_allow_html=True)

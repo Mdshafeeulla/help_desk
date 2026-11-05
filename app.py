@@ -29,9 +29,9 @@ st.markdown("""
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.12));
-        border: 1px solid rgba(99, 102, 241, 0.25);
-        color: #a5b4fc;
+        background: linear-gradient(135deg, rgba(158, 158, 158, 0.15), rgba(189, 189, 189, 0.12));
+        border: 1px solid rgba(158, 158, 158, 0.25);
+        color: #d1d5db;
         padding: 0.4rem 1rem;
         border-radius: 20px;
         font-size: 0.78rem;
@@ -44,7 +44,7 @@ st.markdown("""
     .hero-title {
         font-size: 3rem;
         font-weight: 800;
-        background: linear-gradient(135deg, #818cf8 0%, #a78bfa 30%, #c084fc 60%, #e879f9 100%);
+        background: linear-gradient(135deg, #9e9e9e 0%, #bdbdbd 50%, #e0e0e0 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 0.8rem;
@@ -69,7 +69,7 @@ st.markdown("""
 
     /* ── Role Cards ──────────────────────────────────── */
     .card {
-        background: linear-gradient(145deg, rgba(30, 30, 50, 0.7), rgba(25, 25, 45, 0.5));
+        background: linear-gradient(145deg, rgba(55, 55, 55, 0.8), rgba(40, 40, 40, 0.7));
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 20px;
         padding: 2.2rem 1.8rem;
@@ -87,15 +87,15 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.5), transparent);
+        background: linear-gradient(90deg, transparent, rgba(189, 189, 189, 0.6), transparent);
         opacity: 0;
         transition: opacity 0.3s ease;
     }
 
     .card:hover {
         transform: translateY(-6px);
-        border-color: rgba(129, 140, 248, 0.2);
-        box-shadow: 0 20px 60px rgba(99, 102, 241, 0.12);
+        border-color: rgba(189, 189, 189, 0.4);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
     }
 
     .card:hover::before {
@@ -111,7 +111,7 @@ st.markdown("""
     .card-title {
         font-size: 1.3rem;
         font-weight: 700;
-        color: #e2e8f0;
+        color: #f1f1f1;
         margin-bottom: 0.6rem;
         letter-spacing: -0.01em;
     }
@@ -137,7 +137,7 @@ st.markdown("""
         align-items: center;
         gap: 0.35rem;
         padding: 0.5rem 1rem;
-        background: rgba(30, 30, 50, 0.5);
+        background: rgba(55, 55, 55, 0.7);
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 50px;
         font-size: 0.8rem;
@@ -147,9 +147,9 @@ st.markdown("""
     }
 
     .feature-pill:hover {
-        border-color: rgba(129, 140, 248, 0.25);
-        color: #c4b5fd;
-        background: rgba(99, 102, 241, 0.08);
+        border-color: rgba(189, 189, 189, 0.4);
+        color: #e0e0e0;
+        background: rgba(158, 158, 158, 0.12);
         transform: translateY(-2px);
     }
 
@@ -164,7 +164,7 @@ st.markdown("""
         gap: 2.5rem;
         margin: 2rem auto;
         padding: 1.2rem 2rem;
-        background: linear-gradient(145deg, rgba(30, 30, 50, 0.4), rgba(25, 25, 45, 0.3));
+        background: linear-gradient(145deg, rgba(55, 55, 55, 0.55), rgba(40, 40, 40, 0.45));
         border: 1px solid rgba(255, 255, 255, 0.04);
         border-radius: 16px;
         max-width: 500px;
@@ -177,7 +177,7 @@ st.markdown("""
     .stats-number {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #e2e8f0;
+        color: #f1f1f1;
     }
 
     .stats-label {

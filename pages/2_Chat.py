@@ -30,7 +30,7 @@ st.markdown("""
     .chat-header-title {
         font-size: 1.6rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #818cf8, #c084fc);
+        background: linear-gradient(135deg, #9e9e9e, #e0e0e0);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         letter-spacing: -0.02em;
@@ -47,9 +47,9 @@ st.markdown("""
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.12));
-        border: 1px solid rgba(99, 102, 241, 0.25);
-        color: #a5b4fc;
+        background: linear-gradient(135deg, rgba(158, 158, 158, 0.15), rgba(189, 189, 189, 0.12));
+        border: 1px solid rgba(158, 158, 158, 0.25);
+        color: #d1d5db;
         padding: 0.35rem 0.85rem;
         border-radius: 20px;
         font-size: 0.75rem;
@@ -62,12 +62,12 @@ st.markdown("""
     .sidebar-title {
         font-size: 1.3rem;
         font-weight: 700;
-        color: #e2e8f0;
+        color: #f1f1f1;
         margin-bottom: 0.3rem;
     }
 
     .sidebar-section {
-        background: rgba(30, 30, 50, 0.3);
+        background: rgba(55, 55, 55, 0.5);
         border: 1px solid rgba(255, 255, 255, 0.04);
         border-radius: 12px;
         padding: 0.8rem;
@@ -133,7 +133,7 @@ st.markdown("""
         align-items: center;
         gap: 0.25rem;
         padding: 0.2rem 0.6rem;
-        background: rgba(30, 30, 50, 0.5);
+        background: rgba(55, 55, 55, 0.7);
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 20px;
         font-size: 0.7rem;
