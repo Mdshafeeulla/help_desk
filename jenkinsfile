@@ -1,0 +1,92 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'yourdockerhubuser/git-demo'
+        IMAGE_TAG  = "${BUILD_NUMBER}"
+    }
+
+    options {
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                    python3 -m venv .venv
+                    . .venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                    pip install pytest flake8
+                '''
+            }
+        }
+
+        stage('Lint') {
+            steps {
+                sh '''
+                    . .venv/bin/activate
+                    flake8 app.py core pages utils --max-line-length=120 || true
+                '''
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh '''
+                    . .venv/bin/activate
+                    pytest tests -v --junitxml=test-results.xml
+                '''
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'test-results.xml'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest .
+                '''
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
+                                                  usernameVariable: 'DH_USER',
+                                                  passwordVariable: 'DH_PASS')]) {
+                    sh '''
+                        echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
+                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                        docker push ${IMAGE_NAME}:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} docker compose up -d
+                '''
+            }
+        }
+    }
+
+    post {
+        success { echo "Build ${BUILD_NUMBER} succeeded: ${IMAGE_NAME}:${IMAGE_TAG}" }
+        failure { echo "Build ${BUILD_NUMBER} failed" }
+        always  { sh 'docker logout || true' }
+    }
+}
