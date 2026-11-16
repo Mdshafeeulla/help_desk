@@ -5,7 +5,7 @@ import streamlit as st
 st.set_page_config(
     page_title="MSU Corp Support",
     page_icon="🛡️",
-    layout="centered",
+    layout="wide",
     initial_sidebar_state="collapsed",
 )
 
@@ -29,9 +29,9 @@ st.markdown("""
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        background: linear-gradient(135deg, rgba(158, 158, 158, 0.15), rgba(189, 189, 189, 0.12));
-        border: 1px solid rgba(158, 158, 158, 0.25);
-        color: #d1d5db;
+        background: linear-gradient(135deg, rgba(124, 92, 252, 0.18), rgba(56, 211, 199, 0.1));
+        border: 1px solid rgba(124, 92, 252, 0.35);
+        color: #d9d5ff;
         padding: 0.4rem 1rem;
         border-radius: 20px;
         font-size: 0.78rem;
@@ -44,7 +44,7 @@ st.markdown("""
     .hero-title {
         font-size: 3rem;
         font-weight: 800;
-        background: linear-gradient(135deg, #9e9e9e 0%, #bdbdbd 50%, #e0e0e0 100%);
+        background: linear-gradient(110deg, #ffffff 12%, #a99aff 48%, #67e8d8 92%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 0.8rem;
@@ -69,8 +69,8 @@ st.markdown("""
 
     /* ── Role Cards ──────────────────────────────────── */
     .card {
-        background: linear-gradient(145deg, rgba(55, 55, 55, 0.8), rgba(40, 40, 40, 0.7));
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: linear-gradient(145deg, rgba(23, 31, 52, 0.96), rgba(15, 22, 39, 0.94));
+        border: 1px solid rgba(153, 167, 205, 0.15);
         border-radius: 20px;
         padding: 2.2rem 1.8rem;
         text-align: center;
@@ -87,15 +87,15 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, transparent, rgba(189, 189, 189, 0.6), transparent);
+        background: linear-gradient(90deg, transparent, #7c5cfc, #48d8cd, transparent);
         opacity: 0;
         transition: opacity 0.3s ease;
     }
 
     .card:hover {
         transform: translateY(-6px);
-        border-color: rgba(189, 189, 189, 0.4);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        border-color: rgba(124, 92, 252, 0.55);
+        box-shadow: 0 22px 65px rgba(5, 7, 18, 0.5), 0 0 35px rgba(124, 92, 252, 0.12);
     }
 
     .card:hover::before {
@@ -137,8 +137,8 @@ st.markdown("""
         align-items: center;
         gap: 0.35rem;
         padding: 0.5rem 1rem;
-        background: rgba(55, 55, 55, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(21, 29, 48, 0.8);
+        border: 1px solid rgba(153, 167, 205, 0.14);
         border-radius: 50px;
         font-size: 0.8rem;
         color: #94a3b8;
@@ -147,9 +147,9 @@ st.markdown("""
     }
 
     .feature-pill:hover {
-        border-color: rgba(189, 189, 189, 0.4);
-        color: #e0e0e0;
-        background: rgba(158, 158, 158, 0.12);
+        border-color: rgba(72, 216, 205, 0.45);
+        color: #e3fffb;
+        background: rgba(72, 216, 205, 0.1);
         transform: translateY(-2px);
     }
 
@@ -164,8 +164,8 @@ st.markdown("""
         gap: 2.5rem;
         margin: 2rem auto;
         padding: 1.2rem 2rem;
-        background: linear-gradient(145deg, rgba(55, 55, 55, 0.55), rgba(40, 40, 40, 0.45));
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: linear-gradient(145deg, rgba(23, 31, 52, 0.8), rgba(15, 22, 39, 0.76));
+        border: 1px solid rgba(153, 167, 205, 0.14);
         border-radius: 16px;
         max-width: 500px;
     }
@@ -207,6 +207,76 @@ st.markdown("""
     @keyframes float {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-5px); }
+    }
+
+    .stApp {
+        background:
+            radial-gradient(ellipse at 50% 0%, rgba(84, 69, 173, 0.19), transparent 48%),
+            radial-gradient(ellipse at 92% 70%, rgba(34, 153, 153, 0.08), transparent 36%),
+            #0b1020;
+        color: #edf1ff;
+    }
+
+    [data-testid="stHeader"] {
+        background: transparent;
+    }
+
+    .main .block-container {
+        max-width: 1180px;
+        padding-top: 2rem;
+        padding-bottom: 3rem;
+    }
+
+    .hero-container {
+        padding-top: 3.5rem;
+    }
+
+    .card {
+        min-height: 235px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .stButton > button {
+        min-height: 3rem;
+        border-radius: 12px;
+        font-weight: 650;
+        transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        border-color: rgba(124, 92, 252, 0.7);
+        box-shadow: 0 10px 24px rgba(5, 7, 18, 0.28);
+    }
+
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(110deg, #7657f6, #5742d8);
+        border: 1px solid rgba(181, 166, 255, 0.42);
+        color: #fff;
+    }
+
+    .home-footer {
+        border-color: rgba(153, 167, 205, 0.12);
+        color: #8190b1;
+    }
+
+    @media (max-width: 640px) {
+        .hero-container { padding: 2rem 0.25rem 1rem; }
+        .hero-title { font-size: 2.25rem; }
+        .stats-bar { gap: 1rem; padding: 1rem; }
+        .stats-number { font-size: 1.25rem; }
+        .card { min-height: 0; padding: 1.7rem 1.2rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -282,7 +352,7 @@ st.markdown("""
         <span>L1 Support Automation</span>
     </div>
     <div class="feature-pill">
-        <span class="feature-pill-icon">�</span>
+        <span class="feature-pill-icon">🔎</span>
         <span>RAG + Vector Search</span>
     </div>
     <div class="feature-pill">

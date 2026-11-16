@@ -152,6 +152,104 @@ st.markdown("""
         color: #475569;
         line-height: 1.5;
     }
+
+    .stApp {
+        background:
+            radial-gradient(ellipse at 78% -10%, rgba(84, 69, 173, 0.16), transparent 42%),
+            #0b1020;
+        color: #edf1ff;
+    }
+
+    [data-testid="stHeader"] {
+        background: transparent;
+    }
+
+    .main .block-container {
+        max-width: 1220px;
+        padding-top: 1.5rem;
+        padding-bottom: 5rem;
+    }
+
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #111a2d, #0d1424);
+        border-right: 1px solid rgba(153, 167, 205, 0.13);
+    }
+
+    .sidebar-title,
+    .chat-header-title {
+        color: #f2f4ff;
+    }
+
+    .chat-header-title {
+        background: linear-gradient(110deg, #fff 10%, #a99aff 52%, #67e8d8 94%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .chat-header {
+        padding: 1.2rem 1rem;
+        margin: 0 0 1.2rem;
+        border: 1px solid rgba(153, 167, 205, 0.15);
+        border-radius: 18px;
+        background: linear-gradient(110deg, rgba(23, 31, 52, 0.95), rgba(17, 26, 45, 0.78));
+        box-shadow: 0 14px 40px rgba(4, 7, 18, 0.2);
+    }
+
+    .dept-badge {
+        background: rgba(124, 92, 252, 0.15);
+        border-color: rgba(124, 92, 252, 0.32);
+        color: #d9d5ff;
+    }
+
+    .sidebar-section {
+        background: rgba(23, 31, 52, 0.74);
+        border-color: rgba(153, 167, 205, 0.13);
+    }
+
+    [data-testid="stChatMessage"] {
+        border: 1px solid rgba(153, 167, 205, 0.13);
+        border-radius: 16px;
+        padding: 1rem 1.15rem;
+        background: rgba(19, 27, 46, 0.72);
+        box-shadow: 0 10px 28px rgba(4, 7, 18, 0.12);
+    }
+
+    [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
+        border-color: rgba(124, 92, 252, 0.22);
+        background: linear-gradient(110deg, rgba(48, 39, 99, 0.42), rgba(20, 28, 48, 0.78));
+    }
+
+    [data-testid="stChatInput"] {
+        border: 1px solid rgba(153, 167, 205, 0.2);
+        border-radius: 16px;
+        background: #121b2e;
+        box-shadow: 0 12px 36px rgba(4, 7, 18, 0.32);
+    }
+
+    [data-testid="stChatInput"]:focus-within {
+        border-color: rgba(124, 92, 252, 0.65);
+        box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.14);
+    }
+
+    .stButton > button {
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(110deg, #7657f6, #5742d8);
+        border-color: rgba(181, 166, 255, 0.42);
+    }
+
+    .sidebar-footer {
+        border-color: rgba(153, 167, 205, 0.13);
+    }
+
+    @media (max-width: 640px) {
+        .chat-header { padding: 1rem; }
+        .chat-header-title { font-size: 1.35rem; }
+        [data-testid="stChatMessage"] { padding: 0.8rem; }
+    }
 </style>
 """, unsafe_allow_html=True)
 
