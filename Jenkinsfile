@@ -1,5 +1,5 @@
    pipeline {
-     agent any
+     agent { label 'vinod' }
      environment {
        IMAGE     = "docker.io/umarfd123/help-desk"
        TAG       = "${env.BUILD_NUMBER}"
@@ -30,7 +30,7 @@
          steps {
            sh '''
              kubectl -n $NAMESPACE set image deployment/$DEPLOY $CONTAINER=$IMAGE:$TAG
-             kubectl -n $NAMESPACE rollout status deployment/$DEPLOY --timeout=300s
+             kubectl -n $NAMESPACE rollout status deployment/$DEPLOY --timeout=600s
            '''
          }
        }
