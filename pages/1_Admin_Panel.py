@@ -272,9 +272,9 @@ st.markdown("""
 
     .stApp {
         background:
-            radial-gradient(ellipse at 50% -8%, rgba(84, 69, 173, 0.16), transparent 42%),
-            #0b1020;
-        color: #edf1ff;
+            radial-gradient(ellipse at 50% -8%, rgba(242, 167, 195, 0.12), transparent 42%),
+            #09090c;
+        color: #f8f2f5;
     }
 
     [data-testid="stHeader"] {
@@ -289,56 +289,56 @@ st.markdown("""
 
     .admin-header {
         background:
-            radial-gradient(ellipse at 85% 0%, rgba(72, 216, 205, 0.1), transparent 45%),
-            linear-gradient(120deg, rgba(31, 35, 67, 0.94), rgba(17, 26, 45, 0.96));
-        border-color: rgba(124, 92, 252, 0.28);
-        box-shadow: 0 18px 48px rgba(4, 7, 18, 0.22);
+            radial-gradient(ellipse at 85% 0%, rgba(255, 214, 229, 0.07), transparent 45%),
+            linear-gradient(120deg, rgba(38, 29, 35, 0.96), rgba(17, 15, 19, 0.98));
+        border-color: rgba(242, 167, 195, 0.24);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
     }
 
     .admin-title {
-        background: linear-gradient(110deg, #fff 10%, #a99aff 52%, #67e8d8 94%);
+        background: linear-gradient(110deg, #fff8fb 10%, #f2a7c3 56%, #ffd6e5 94%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
     .stat-card,
     .upload-zone {
-        background: linear-gradient(145deg, rgba(23, 31, 52, 0.94), rgba(15, 22, 39, 0.92));
-        border-color: rgba(153, 167, 205, 0.15);
+        background: linear-gradient(145deg, rgba(27, 24, 31, 0.96), rgba(16, 15, 19, 0.95));
+        border-color: rgba(255, 214, 229, 0.1);
     }
 
     .stat-card:hover {
-        border-color: rgba(72, 216, 205, 0.4);
-        box-shadow: 0 12px 34px rgba(4, 7, 18, 0.28), 0 0 24px rgba(72, 216, 205, 0.07);
+        border-color: rgba(242, 167, 195, 0.38);
+        box-shadow: 0 12px 34px rgba(0, 0, 0, 0.42), 0 0 24px rgba(242, 167, 195, 0.06);
     }
 
     .stat-icon {
-        filter: drop-shadow(0 5px 14px rgba(124, 92, 252, 0.18));
+        filter: drop-shadow(0 5px 14px rgba(242, 167, 195, 0.16));
     }
 
     .stat-label,
     .admin-subtitle {
-        color: #9aa8c7;
+        color: #b6a8af;
     }
 
     .section-header {
-        color: #edf1ff;
-        border-color: rgba(153, 167, 205, 0.14);
+        color: #f8f2f5;
+        border-color: rgba(255, 214, 229, 0.1);
     }
 
     .info-banner {
-        background: linear-gradient(110deg, rgba(124, 92, 252, 0.14), rgba(72, 216, 205, 0.08));
-        border-color: rgba(124, 92, 252, 0.3);
+        background: linear-gradient(110deg, rgba(242, 167, 195, 0.13), rgba(255, 214, 229, 0.06));
+        border-color: rgba(242, 167, 195, 0.27);
     }
 
     .stTabs [data-baseweb="tab-list"] {
-        background: rgba(17, 26, 45, 0.88);
-        border: 1px solid rgba(153, 167, 205, 0.13);
+        background: rgba(17, 15, 19, 0.92);
+        border: 1px solid rgba(255, 214, 229, 0.1);
     }
 
     .stTabs [aria-selected="true"] {
-        background: rgba(124, 92, 252, 0.2);
-        color: #e5e0ff;
+        background: rgba(242, 167, 195, 0.16);
+        color: #ffe5ee;
     }
 
     .stButton > button {
@@ -347,23 +347,23 @@ st.markdown("""
     }
 
     .stButton > button[kind="primary"] {
-        background: linear-gradient(110deg, #7657f6, #5742d8);
-        border-color: rgba(181, 166, 255, 0.42);
+        background: linear-gradient(110deg, #f2a7c3, #d982a4);
+        border-color: rgba(255, 214, 229, 0.42);
     }
 
     [data-testid="stFileUploader"] section {
-        background: rgba(21, 29, 48, 0.72);
-        border: 1px dashed rgba(124, 92, 252, 0.36);
+        background: rgba(22, 20, 24, 0.84);
+        border: 1px dashed rgba(242, 167, 195, 0.32);
         border-radius: 16px;
     }
 
     [data-testid="stFileUploader"] section:hover {
-        border-color: rgba(72, 216, 205, 0.55);
+        border-color: rgba(255, 214, 229, 0.52);
     }
 
     .admin-footer {
-        border-color: rgba(153, 167, 205, 0.13);
-        color: #8190b1;
+        border-color: rgba(255, 214, 229, 0.1);
+        color: #a99aa1;
     }
 
     @media (max-width: 720px) {
@@ -456,14 +456,14 @@ with tab_upload:
         with col_info1:
             st.markdown(f"""
             <div class="stat-card" style="padding: 1rem;">
-                <div style="font-size: 1.4rem; font-weight: 700; color: #a99aff;">{file_count}</div>
+                <div style="font-size: 1.4rem; font-weight: 700; color: #f2a7c3;">{file_count}</div>
                 <div class="stat-label">Files Selected</div>
             </div>
             """, unsafe_allow_html=True)
         with col_info2:
             st.markdown(f"""
             <div class="stat-card" style="padding: 1rem;">
-                <div style="font-size: 1.4rem; font-weight: 700; color: #67e8d8;">{size_str}</div>
+                <div style="font-size: 1.4rem; font-weight: 700; color: #ffd6e5;">{size_str}</div>
                 <div class="stat-label">Total Size</div>
             </div>
             """, unsafe_allow_html=True)

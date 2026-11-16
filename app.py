@@ -29,9 +29,9 @@ st.markdown("""
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        background: linear-gradient(135deg, rgba(124, 92, 252, 0.18), rgba(56, 211, 199, 0.1));
-        border: 1px solid rgba(124, 92, 252, 0.35);
-        color: #d9d5ff;
+        background: linear-gradient(135deg, rgba(242, 167, 195, 0.18), rgba(255, 214, 229, 0.08));
+        border: 1px solid rgba(242, 167, 195, 0.32);
+        color: #ffd6e5;
         padding: 0.4rem 1rem;
         border-radius: 20px;
         font-size: 0.78rem;
@@ -44,7 +44,7 @@ st.markdown("""
     .hero-title {
         font-size: 3rem;
         font-weight: 800;
-        background: linear-gradient(110deg, #ffffff 12%, #a99aff 48%, #67e8d8 92%);
+        background: linear-gradient(110deg, #fff8fb 12%, #f2a7c3 55%, #ffd6e5 92%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 0.8rem;
@@ -69,8 +69,8 @@ st.markdown("""
 
     /* ── Role Cards ──────────────────────────────────── */
     .card {
-        background: linear-gradient(145deg, rgba(23, 31, 52, 0.96), rgba(15, 22, 39, 0.94));
-        border: 1px solid rgba(153, 167, 205, 0.15);
+        background: linear-gradient(145deg, rgba(27, 24, 31, 0.98), rgba(16, 15, 19, 0.97));
+        border: 1px solid rgba(255, 214, 229, 0.1);
         border-radius: 20px;
         padding: 2.2rem 1.8rem;
         text-align: center;
@@ -87,15 +87,15 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, transparent, #7c5cfc, #48d8cd, transparent);
+        background: linear-gradient(90deg, transparent, #f2a7c3, #ffd6e5, transparent);
         opacity: 0;
         transition: opacity 0.3s ease;
     }
 
     .card:hover {
         transform: translateY(-6px);
-        border-color: rgba(124, 92, 252, 0.55);
-        box-shadow: 0 22px 65px rgba(5, 7, 18, 0.5), 0 0 35px rgba(124, 92, 252, 0.12);
+        border-color: rgba(242, 167, 195, 0.52);
+        box-shadow: 0 22px 65px rgba(0, 0, 0, 0.58), 0 0 35px rgba(242, 167, 195, 0.1);
     }
 
     .card:hover::before {
@@ -137,8 +137,8 @@ st.markdown("""
         align-items: center;
         gap: 0.35rem;
         padding: 0.5rem 1rem;
-        background: rgba(21, 29, 48, 0.8);
-        border: 1px solid rgba(153, 167, 205, 0.14);
+        background: rgba(27, 24, 31, 0.86);
+        border: 1px solid rgba(255, 214, 229, 0.1);
         border-radius: 50px;
         font-size: 0.8rem;
         color: #94a3b8;
@@ -147,9 +147,9 @@ st.markdown("""
     }
 
     .feature-pill:hover {
-        border-color: rgba(72, 216, 205, 0.45);
-        color: #e3fffb;
-        background: rgba(72, 216, 205, 0.1);
+        border-color: rgba(242, 167, 195, 0.42);
+        color: #fff0f6;
+        background: rgba(242, 167, 195, 0.1);
         transform: translateY(-2px);
     }
 
@@ -164,8 +164,8 @@ st.markdown("""
         gap: 2.5rem;
         margin: 2rem auto;
         padding: 1.2rem 2rem;
-        background: linear-gradient(145deg, rgba(23, 31, 52, 0.8), rgba(15, 22, 39, 0.76));
-        border: 1px solid rgba(153, 167, 205, 0.14);
+        background: linear-gradient(145deg, rgba(27, 24, 31, 0.86), rgba(16, 15, 19, 0.82));
+        border: 1px solid rgba(255, 214, 229, 0.1);
         border-radius: 16px;
         max-width: 500px;
     }
@@ -211,10 +211,10 @@ st.markdown("""
 
     .stApp {
         background:
-            radial-gradient(ellipse at 50% 0%, rgba(84, 69, 173, 0.19), transparent 48%),
-            radial-gradient(ellipse at 92% 70%, rgba(34, 153, 153, 0.08), transparent 36%),
-            #0b1020;
-        color: #edf1ff;
+            radial-gradient(ellipse at 50% 0%, rgba(242, 167, 195, 0.13), transparent 48%),
+            radial-gradient(ellipse at 92% 70%, rgba(255, 214, 229, 0.045), transparent 36%),
+            #09090c;
+        color: #f8f2f5;
     }
 
     [data-testid="stHeader"] {
@@ -247,19 +247,19 @@ st.markdown("""
 
     .stButton > button:hover {
         transform: translateY(-2px);
-        border-color: rgba(124, 92, 252, 0.7);
-        box-shadow: 0 10px 24px rgba(5, 7, 18, 0.28);
+        border-color: rgba(242, 167, 195, 0.7);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.42);
     }
 
     .stButton > button[kind="primary"] {
-        background: linear-gradient(110deg, #7657f6, #5742d8);
-        border: 1px solid rgba(181, 166, 255, 0.42);
+        background: linear-gradient(110deg, #f2a7c3, #d982a4);
+        border: 1px solid rgba(255, 214, 229, 0.42);
         color: #fff;
     }
 
     .home-footer {
-        border-color: rgba(153, 167, 205, 0.12);
-        color: #8190b1;
+        border-color: rgba(255, 214, 229, 0.1);
+        color: #a99aa1;
     }
 
     @media (max-width: 640px) {

@@ -155,9 +155,9 @@ st.markdown("""
 
     .stApp {
         background:
-            radial-gradient(ellipse at 78% -10%, rgba(84, 69, 173, 0.16), transparent 42%),
-            #0b1020;
-        color: #edf1ff;
+            radial-gradient(ellipse at 78% -10%, rgba(242, 167, 195, 0.12), transparent 42%),
+            #09090c;
+        color: #f8f2f5;
     }
 
     [data-testid="stHeader"] {
@@ -171,17 +171,17 @@ st.markdown("""
     }
 
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #111a2d, #0d1424);
-        border-right: 1px solid rgba(153, 167, 205, 0.13);
+        background: linear-gradient(180deg, #17151a, #0c0b0f);
+        border-right: 1px solid rgba(255, 214, 229, 0.1);
     }
 
     .sidebar-title,
     .chat-header-title {
-        color: #f2f4ff;
+        color: #fff5f9;
     }
 
     .chat-header-title {
-        background: linear-gradient(110deg, #fff 10%, #a99aff 52%, #67e8d8 94%);
+        background: linear-gradient(110deg, #fff8fb 10%, #f2a7c3 56%, #ffd6e5 94%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -189,46 +189,46 @@ st.markdown("""
     .chat-header {
         padding: 1.2rem 1rem;
         margin: 0 0 1.2rem;
-        border: 1px solid rgba(153, 167, 205, 0.15);
+        border: 1px solid rgba(255, 214, 229, 0.11);
         border-radius: 18px;
-        background: linear-gradient(110deg, rgba(23, 31, 52, 0.95), rgba(17, 26, 45, 0.78));
-        box-shadow: 0 14px 40px rgba(4, 7, 18, 0.2);
+        background: linear-gradient(110deg, rgba(27, 24, 31, 0.96), rgba(17, 15, 19, 0.86));
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.38);
     }
 
     .dept-badge {
-        background: rgba(124, 92, 252, 0.15);
-        border-color: rgba(124, 92, 252, 0.32);
-        color: #d9d5ff;
+        background: rgba(242, 167, 195, 0.12);
+        border-color: rgba(242, 167, 195, 0.3);
+        color: #ffd6e5;
     }
 
     .sidebar-section {
-        background: rgba(23, 31, 52, 0.74);
-        border-color: rgba(153, 167, 205, 0.13);
+        background: rgba(27, 24, 31, 0.8);
+        border-color: rgba(255, 214, 229, 0.1);
     }
 
     [data-testid="stChatMessage"] {
-        border: 1px solid rgba(153, 167, 205, 0.13);
+        border: 1px solid rgba(255, 214, 229, 0.1);
         border-radius: 16px;
         padding: 1rem 1.15rem;
-        background: rgba(19, 27, 46, 0.72);
-        box-shadow: 0 10px 28px rgba(4, 7, 18, 0.12);
+        background: rgba(22, 20, 24, 0.82);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.26);
     }
 
     [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
-        border-color: rgba(124, 92, 252, 0.22);
-        background: linear-gradient(110deg, rgba(48, 39, 99, 0.42), rgba(20, 28, 48, 0.78));
+        border-color: rgba(242, 167, 195, 0.2);
+        background: linear-gradient(110deg, rgba(76, 43, 58, 0.35), rgba(22, 20, 24, 0.86));
     }
 
     [data-testid="stChatInput"] {
-        border: 1px solid rgba(153, 167, 205, 0.2);
+        border: 1px solid rgba(255, 214, 229, 0.16);
         border-radius: 16px;
-        background: #121b2e;
-        box-shadow: 0 12px 36px rgba(4, 7, 18, 0.32);
+        background: #151419;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.46);
     }
 
     [data-testid="stChatInput"]:focus-within {
-        border-color: rgba(124, 92, 252, 0.65);
-        box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.14);
+        border-color: rgba(242, 167, 195, 0.62);
+        box-shadow: 0 0 0 3px rgba(242, 167, 195, 0.13);
     }
 
     .stButton > button {
@@ -237,12 +237,12 @@ st.markdown("""
     }
 
     .stButton > button[kind="primary"] {
-        background: linear-gradient(110deg, #7657f6, #5742d8);
-        border-color: rgba(181, 166, 255, 0.42);
+        background: linear-gradient(110deg, #f2a7c3, #d982a4);
+        border-color: rgba(255, 214, 229, 0.42);
     }
 
     .sidebar-footer {
-        border-color: rgba(153, 167, 205, 0.13);
+        border-color: rgba(255, 214, 229, 0.1);
     }
 
     @media (max-width: 640px) {
