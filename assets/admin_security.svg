@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#19141b"/>
+      <stop offset="1" stop-color="#09090c"/>
+    </linearGradient>
+    <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd6e5"/>
+      <stop offset="1" stop-color="#d982a4"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="960" height="600" rx="32" fill="url(#bg)"/>
+  <circle cx="760" cy="140" r="230" fill="#f2a7c3" opacity=".08"/>
+  <circle cx="110" cy="560" r="220" fill="#f2a7c3" opacity=".06"/>
+  <g filter="url(#glow)" transform="translate(480 300)">
+    <path d="M0-154L134-104V19C134 100 80 151 0 184C-80 151-134 100-134 19V-104Z" fill="none" stroke="url(#pink)" stroke-width="10"/>
+    <path d="M-72-66L0-92L72-66V18C72 69 43 105 0 128C-43 105-72 69-72 18Z" fill="#f2a7c3" opacity=".12"/>
+    <rect x="-58" y="-25" width="116" height="92" rx="18" fill="#17151a" stroke="#ffd6e5" stroke-width="5"/>
+    <path d="M-34-25V-56C-34-96 34-96 34-56V-25" fill="none" stroke="#ffd6e5" stroke-width="12"/>
+  </g>
+  <text x="64" y="82" fill="#fff5f9" font-family="Inter,Arial" font-size="28" font-weight="700">SECURE WORKSPACE</text>
+  <text x="64" y="116" fill="#b6a8af" font-family="Inter,Arial" font-size="16">Identity protected. Knowledge controlled.</text>
+</svg>

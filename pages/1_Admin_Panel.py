@@ -10,6 +10,7 @@ from utils.image_parser import extract_image_text
 from utils.word_parser import extract_word_text
 import json
 import time
+from pathlib import Path
 
 st.set_page_config(page_title="MSU Corp Admin", page_icon="🔑", layout="wide")
 require_admin_access()
@@ -295,6 +296,25 @@ st.markdown("""
         box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
     }
 
+    .admin-gallery [data-testid="stImage"] {
+        overflow: hidden;
+        border: 1px solid rgba(255, 214, 229, 0.12);
+        border-radius: 16px;
+        background: rgba(17, 15, 19, 0.9);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+        transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .admin-gallery [data-testid="stImage"]:hover {
+        transform: translateY(-4px);
+        border-color: rgba(242, 167, 195, 0.38);
+    }
+
+    .admin-gallery [data-testid="stImage"] img {
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+    }
+
     .admin-title {
         background: linear-gradient(110deg, #fff8fb 10%, #f2a7c3 56%, #ffd6e5 94%);
         -webkit-background-clip: text;
@@ -391,6 +411,26 @@ st.markdown("""
     <div class="admin-subtitle">Upload documents · Monitor knowledge base · Manage support content</div>
 </div>
 """, unsafe_allow_html=True)
+
+# Admin visual gallery
+project_root = Path(__file__).resolve().parent.parent
+policy_image = project_root / "IT_Policy_Infographic.png"
+security_image = project_root / "assets" / "admin_security.svg"
+knowledge_image = project_root / "assets" / "admin_knowledge.svg"
+
+gallery_items = [
+    (policy_image, "IT Department Security Policy 2025"),
+    (security_image, "Secure workspace"),
+    (knowledge_image, "Connected knowledge"),
+]
+
+st.markdown('<div class="admin-gallery">', unsafe_allow_html=True)
+gallery_cols = st.columns([1, 1, 1])
+for column, (image_path, caption) in zip(gallery_cols, gallery_items):
+    if image_path.exists():
+        with column:
+            st.image(str(image_path), caption=caption, use_container_width=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # ── Quick Stats ───────────────────────────────────────────────────────
 stats = store.get_stats()

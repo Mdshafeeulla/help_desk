@@ -7,7 +7,7 @@ from core.store import store
 from core.config import cfg
 from core.llm import prewarm_model
 
-st.set_page_config(page_title="MSU Corp Support", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="MSU Corp Chat Support", page_icon="🛡️", layout="wide")
 
 # ── Premium Styles ────────────────────────────────────────────────────
 st.markdown("""
