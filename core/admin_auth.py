@@ -113,9 +113,68 @@ def require_admin_access() -> None:
                 st.rerun()
         return
 
+    st.markdown(
+        """
+        <style>
+            [data-testid="stAppViewContainer"] {
+                background:
+                    radial-gradient(circle at 18% 12%, rgba(242, 167, 195, 0.12), transparent 28rem),
+                    radial-gradient(circle at 82% 88%, rgba(217, 130, 164, 0.07), transparent 24rem),
+                    #09090c;
+            }
+            .auth-visual {
+                height: 100%;
+                min-height: 31rem;
+                overflow: hidden;
+                border: 1px solid rgba(255, 214, 229, 0.12);
+                border-radius: 20px;
+                background: linear-gradient(145deg, rgba(38, 29, 35, 0.96), rgba(17, 15, 19, 0.98));
+                box-shadow: 0 22px 55px rgba(0, 0, 0, 0.38);
+            }
+            .auth-visual [data-testid="stImage"] {
+                width: 100%;
+                height: 100%;
+            }
+            .auth-visual [data-testid="stImage"] img {
+                width: 100%;
+                height: 31rem;
+                object-fit: cover;
+            }
+            .auth-heading {
+                padding-top: 1.5rem !important;
+            }
+            [data-testid="stForm"] {
+                border: 1px solid rgba(255, 214, 229, 0.12) !important;
+                border-radius: 18px;
+                background: rgba(17, 15, 19, 0.94);
+                padding: 1.5rem;
+                box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+            }
+            [data-testid="stFormSubmitButton"] button {
+                background: linear-gradient(110deg, #f2a7c3, #d982a4) !important;
+                border: 1px solid rgba(255, 214, 229, 0.42) !important;
+                color: #24141b !important;
+                border-radius: 11px;
+                font-weight: 700;
+            }
+            @media (max-width: 720px) {
+                .auth-visual { display: none; }
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    visual_path = Path(__file__).resolve().parent.parent / "assets" / "admin_security.svg"
+    visual, form = st.columns([1.15, 0.85], gap="large")
+
     if account is None:
-        _, auth_column, _ = st.columns([1, 1.1, 1])
-        with auth_column:
+        with visual:
+            st.markdown('<div class="auth-visual">', unsafe_allow_html=True)
+            if visual_path.exists():
+                st.image(str(visual_path), use_container_width=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+        with form:
             _render_auth_header(
                 st,
                 "Create your admin account",
@@ -164,8 +223,12 @@ def require_admin_access() -> None:
                     st.rerun()
         st.stop()
 
-    _, auth_column, _ = st.columns([1, 1.1, 1])
-    with auth_column:
+    with visual:
+        st.markdown('<div class="auth-visual">', unsafe_allow_html=True)
+        if visual_path.exists():
+            st.image(str(visual_path), use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+    with form:
         _render_auth_header(
             st,
             "Welcome back",
